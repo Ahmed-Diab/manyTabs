@@ -1,0 +1,23 @@
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Name</th>
+      <th scope="col">Barcode</th>
+      <th scope="col">Price</th>
+      <th scope="col">Current Balance</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let product of productsData; index as i">
+      <th scope="row">{{ product.id }}</th>
+      <td>
+         {{ product.name }}
+      </td>
+      <td>{{ product.barcode  }}</td>
+      <td>{{ product.price  }}</td>
+      <td>{{ product.currentBalance  }}</td>
+    </tr>
+    </tbody>
+  </table>

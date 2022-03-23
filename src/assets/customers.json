@@ -1,0 +1,32 @@
+[
+    {
+        "id": 1,
+        "name": "ahmed Mohamed",
+        "email": "ahmed@mohamed.com",
+        "phoneNumber": "01123456789"
+    },
+    {
+        "id": 2,
+        "name": "Aly Othman Mohamed",
+        "email": "ali@gmail.com",
+        "phoneNumber": "01233356589"
+    },
+    {
+        "id": 3,
+        "name": "ebraheam gaber",
+        "email": "eb239@outlook.com",
+        "phoneNumber": "011238899665"
+    },
+    {
+        "id": 4,
+        "name": "Kream Aly",
+        "email": "koko@gmail.com",
+        "phoneNumber": "01123777789"
+    },
+    {
+        "id": 5,
+        "name": "Eman Mohamed",
+        "email": "em890@hotmail.com",
+        "phoneNumber": "0112341429"
+    }
+]

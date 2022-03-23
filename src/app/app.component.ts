@@ -1,10 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-  title = 'manyTaps';
+export class AppComponent  implements OnInit{
+  ngOnInit(): void {
+    localStorage.clear()
+  }
+  title = 'tapsApp';
 }

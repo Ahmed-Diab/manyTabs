@@ -1,0 +1,18 @@
+ <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+    <li *ngFor="let tab of tabs; let index = index;" [ngbNavItem]="tab.url" [id]="tab.url">
+        <a ngbNavLink [ngClass]="tab.isActive ? 'active' : ''">
+            <span (click)="onTabChange(tab)">Tab {{ tab.name }}</span>
+            <span class="btn-close ms-2 fw-light" (click)="closeTab(tab, $event, index)"></span>
+        </a>
+        <!-- <ng-template ngbNavContent>
+            <router-outlet></router-outlet>
+
+        </ng-template> -->
+    </li>
+</ul>
+<!-- <div [ngbNavOutlet]="nav" class="mt-2">
+    <router-outlet></router-outlet>
+
+</div>   -->
+ 
+<router-outlet></router-outlet>
