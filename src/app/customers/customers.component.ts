@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ICustomer } from './customer.interface';
-import customers from '../../assets/customers.json';
-import { ITab } from '../tab.service';
+import data from '../../assets/data.json';
+import { ITab, TabService } from '../tab.service';
 
 
 @Component({
@@ -13,24 +13,24 @@ export class CustomersComponent implements OnInit {
   customersData: ICustomer[] = [];
   pageId: number = 1;
   constructor(
+    private tabService:TabService
   ) { }
 
   ngOnInit(): void {
     this.getCustomers()
   }
   getCustomers() {
-    let openedTabsBeforParse: any = localStorage.getItem("openedTabs");
-    if (openedTabsBeforParse != undefined) {
-      let openedTabs: ITab[] = JSON.parse(openedTabsBeforParse);
-      let page: any = openedTabs.find(p => p.id === this.pageId);
-      if (page && page.data.length > 0) {
-        this.customersData = page.data;
+      // get tab from local storge
+      let tab = this.tabService.findTabByPageIdFromLoclStorge(this.pageId);
+      // if this tab is alredy opened will get data from local storge
+      if (tab && tab.data.length > 0) {
+        this.customersData = tab.data;
       } else {
-        page.data = customers;
-        this.customersData = customers;
-        localStorage.setItem("openedTabs", JSON.stringify(openedTabs))
+        // if you open this tab for first time will get data from  json file
+        //you can change the next line to get data from the server
+        this.customersData = data.customers;
+        // set data to the tab in local storge
+        this.tabService.addDataToTabInLocalStorge(tab, data.customers);
       }
     }
-  }
-
 }

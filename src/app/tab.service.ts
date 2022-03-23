@@ -18,7 +18,7 @@ export class TabService {
   constructor() { }
   onTabChange(key: any) {
     this.tabChanged.next(key);
-  }
+   }
   addTab(url: string) {
     const tab: any = this.getTabOptionByUrl(url);
     if (!this.tabs.includes(tab)) {
@@ -34,15 +34,34 @@ export class TabService {
     return this.tabOptions.find((tab: ITab) => tab.url === url);
   }
 
+  // remove tab from local storge and tabs
   deleteTab(tab: ITab, index: number) {
     this.tabs.splice(index, 1);
-    let openedTabsBeforParse: any = localStorage.getItem("openedTabs");
-    if (openedTabsBeforParse != undefined) {
-      let openedTabs: ITab[] = JSON.parse(openedTabsBeforParse);
-      openedTabs = openedTabs.filter(p => p.id !== tab.id);
-      localStorage.setItem("openedTabs", JSON.stringify(openedTabs))
+    let openedTabs: ITab[] = this.getTabsFromLocalStorge();
+    openedTabs = openedTabs.filter(p => p.id !== tab.id);
+    localStorage.setItem("openedTabs", JSON.stringify(openedTabs))
+  }
 
-    }
+  findTabByPageIdFromLoclStorge(id: number): ITab {
+    let openedTabs: ITab[] = this.getTabsFromLocalStorge();
+    let page: any = openedTabs.find(p => p.id === id);
+    return page ? page : null;
+  }
+
+  getTabsFromLocalStorge(): ITab[] {
+    let openedTabsBeforParse: any = localStorage.getItem("openedTabs");
+    let openedTabs: ITab[] = JSON.parse(openedTabsBeforParse);
+    return openedTabs;
+  }
+
+  addDataToTabInLocalStorge(tab: ITab, data: any[]) {
+    let tabs = this.getTabsFromLocalStorge();
+    tabs.forEach(obj => {
+      if (obj.id == tab.id) {
+        obj.data = data;
+      }
+    });
+    localStorage.setItem("openedTabs", JSON.stringify(tabs))
   }
 }
 export interface ITab {

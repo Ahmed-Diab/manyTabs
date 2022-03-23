@@ -1,27 +1,11 @@
-# ManyTaps
-
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.1.2.
-
-## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+# Many Tabs Applcation
+This is simlpe Angular application allows you to create multi tabs in one screen area like the browser.
+### NPM packages
+1. `@ng-bootstrap/ng-bootstrap`
+2. `@popperjs/core`
+### Using
+1.  if you don't install Angular `npm install -g @angular/cli`
+2. `git clone https://github.com/Ahmed-Diab/manyTaps.git`
+3. `cd manyTabs`
+4. `npm install`
+5. `ng serve -o`

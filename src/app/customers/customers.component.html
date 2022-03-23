@@ -12,7 +12,8 @@
     <tr *ngFor="let customer of customersData; index as i">
       <th scope="row">{{ i + 1 }}</th>
       <td>
-         {{ customer.name }}
+        
+         {{ customer.name | titlecase}}
       </td>
       <td>{{ customer.email  }}</td>
       <td>{{ customer.phoneNumber  }}</td>

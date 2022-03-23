@@ -8,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 export class AppComponent  implements OnInit{
   ngOnInit(): void {
     localStorage.clear()
+    localStorage.setItem("openedTabs", "[]")
   }
   title = 'tapsApp';
 }

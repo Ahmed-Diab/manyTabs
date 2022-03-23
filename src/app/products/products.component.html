@@ -1,5 +1,5 @@
-
-<table class="table table-striped">
+<div>
+  <table class="table table-striped">
     <thead>
     <tr>
       <th scope="col">Id</th>
@@ -13,7 +13,7 @@
     <tr *ngFor="let product of productsData; index as i">
       <th scope="row">{{ product.id }}</th>
       <td>
-         {{ product.name }}
+         {{ product.name | titlecase}}
       </td>
       <td>{{ product.barcode  }}</td>
       <td>{{ product.price  }}</td>
@@ -21,3 +21,4 @@
     </tr>
     </tbody>
   </table>
+</div>

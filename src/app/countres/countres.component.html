@@ -9,11 +9,11 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let country of countriesList; index as i">
+    <tr *ngFor="let country of countriesData; index as i">
       <th scope="row">{{ i + 1 }}</th>
       <td>
         <img [src]="'https://upload.wikimedia.org/wikipedia/commons/' + country.flag" class="me-2" style="width: 20px">
-        {{ country.name }}
+        {{ country.name | titlecase}}
       </td>
       <td>{{ country.area | number }}</td>
       <td>{{ country.population | number }}</td>
