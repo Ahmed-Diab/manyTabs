@@ -9,4 +9,5 @@ This is simple Angular application allows you routning out of the box using mult
 3. `cd manyTabs`
 4. `npm install`
 5. `ng serve -o`
+### Images
 ![many-tabs image](/src/assets/images/many-tabs.PNG)
