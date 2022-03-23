@@ -1,5 +1,5 @@
 # Many Tabs Applcation
-This is simlpe Angular application allows you to create multi tabs in one screen area like the browser.
+This is simple Angular application allows you routning out of the box using multi tabs in one screen area like the browser to make user mange multi tasks in the same time with out open new tab from the browser.
 ### NPM packages
 1. `@ng-bootstrap/ng-bootstrap`
 2. `@popperjs/core`
@@ -9,3 +9,4 @@ This is simlpe Angular application allows you to create multi tabs in one screen
 3. `cd manyTabs`
 4. `npm install`
 5. `ng serve -o`
+![many-tabs image](/src/assets/images/many-tabs.PNG)

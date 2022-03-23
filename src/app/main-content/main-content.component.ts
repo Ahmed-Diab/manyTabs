@@ -15,10 +15,14 @@ export class MainContentComponent implements OnInit {
   active: any;
   constructor(public sanitizer: DomSanitizer, private tabService: TabService, private router: Router) {
     this.tabService.tabChanged$.subscribe((data: ITab) => {
-      if (data) {
-        this.tabs.filter(obj => {
-          obj.id !== data.id ? obj.isActive = false : obj.isActive = true;
-        });
+      if (data) {   
+        setTimeout(() => {
+          this.tabs.filter(obj => {
+            obj.id !== data.id ? obj.isActive = false : obj.isActive = true;
+         });
+        }, 100);     
+
+        
       }
     });
   }

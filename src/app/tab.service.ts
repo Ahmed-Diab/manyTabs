@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 
 @Injectable({
@@ -15,10 +16,12 @@ export class TabService {
     { id: 3, name: 'Products', url: '/products', data: [], isActive: false }
   ];
 
-  constructor() { }
+  constructor(
+    private router: Router
+  ) { }
   onTabChange(key: any) {
     this.tabChanged.next(key);
-   }
+  }
   addTab(url: string) {
     const tab: any = this.getTabOptionByUrl(url);
     if (!this.tabs.includes(tab)) {
@@ -39,7 +42,12 @@ export class TabService {
     this.tabs.splice(index, 1);
     let openedTabs: ITab[] = this.getTabsFromLocalStorge();
     openedTabs = openedTabs.filter(p => p.id !== tab.id);
-    localStorage.setItem("openedTabs", JSON.stringify(openedTabs))
+
+    if (openedTabs.length > 0) {
+      this.onTabChange(openedTabs[0])
+      this.router.navigateByUrl(openedTabs[0].url)
+    };
+    localStorage.setItem("openedTabs", JSON.stringify(openedTabs));
   }
 
   findTabByPageIdFromLoclStorge(id: number): ITab {

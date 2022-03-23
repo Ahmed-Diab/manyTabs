@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export class MenuComponent implements OnInit {
 
   menuOptions: ITab[] = [];
-  @Output()  TabEvent = new EventEmitter<ITab>(); 
+  @Output() TabEvent = new EventEmitter<ITab>();
   constructor(private tabService: TabService, private router: Router) { }
 
   ngOnInit() {
@@ -19,26 +19,16 @@ export class MenuComponent implements OnInit {
   openTab(option: any) {
     this.tabService.addTab(option.url);
     this.router.navigateByUrl(option.url);
-    var tabs = localStorage.getItem("openedTabs");
-    if (tabs) {
-      let openedTabsBeforParse: any = localStorage.getItem("openedTabs");
-      let openedTabs: any[] = JSON.parse(openedTabsBeforParse);
-      let page: any = openedTabs.find(p => p.id === option.id);
-      if (!page) {
-        option.isActive = true;
-        openedTabs.push(option);
-         openedTabs.filter(tab => {
-          tab.id !== option.id
-            ? tab.isActive = false : tab.isActive = true;
-        });
-        localStorage.setItem("openedTabs", JSON.stringify(openedTabs));
-      }
-      this.tabService.onTabChange(option);
-    } else {
-      let newTabs: any[] = [];
-      option.isActive = true;
-      newTabs.push(option)
-      localStorage.setItem("openedTabs", JSON.stringify(newTabs))
+    var tabs: ITab[] = this.tabService.getTabsFromLocalStorge();
+    let page: any = tabs.find(p => p.id === option.id);
+    if (!page) {
+      tabs.push(option);
+      tabs.filter(tab => {
+        tab.id !== option.id
+          ? tab.isActive = false : tab.isActive = true;
+      });
+      localStorage.setItem("openedTabs", JSON.stringify(tabs));
     }
+    this.tabService.onTabChange(option);
   }
 }
