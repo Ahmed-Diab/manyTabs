@@ -10,10 +10,23 @@ router.delete('/:id', asyncHandler(deleteProduct));
 router.put('/update', asyncHandler(updateProduct));
 router.post('/create', asyncHandler(insert));
 router.post('/createMany', asyncHandler(insertMany));
+router.post('/deleteMany', asyncHandler(deleteMany));
 
+
+async function deleteMany(req, res, next) {
+  await productCtrl.deleteMany(req.body).then((data) => {
+    return res.json({ success: true, data: data, message: "Success Deleted" });
+  }).catch((error) => {
+    if (error.code === 11000) {
+      let msg = error.keyPattern.barcode == 1 ? 'Product Barcode already exist!' : 'Product Name already exist!'
+      return res.json({ success: false, message: msg });
+    }
+    return res.json({ success: false, message: error.message });
+  });
+}
 async function insert(req, res, next) {
   await productCtrl.insert(req.body).then((product) => {
-    return res.json({ success: true, product: product, message:"Success Add" });
+    return res.json({ success: true, product: product, message: "Success Add" });
   }).catch((error) => {
     if (error.code === 11000) {
       let msg = error.keyPattern.barcode == 1 ? 'Product Barcode already exist!' : 'Product Name already exist!'
@@ -24,7 +37,7 @@ async function insert(req, res, next) {
 }
 async function updateProduct(req, res, next) {
   await productCtrl.updateProduct(req.body).then((product) => {
-    return res.json({ success: true, product: product, message:"Success Update" });
+    return res.json({ success: true, product: product, message: "Success Update" });
   }).catch((error) => {
     if (error.code === 11000) {
       let msg = error.keyPattern.barcode == 1 ? 'Product Barcode already exist!' : 'Product Name already exist!'
@@ -34,17 +47,16 @@ async function updateProduct(req, res, next) {
   });
 }
 async function deleteProduct(req, res, next) {
-  console.log(req.params.id);
   await productCtrl.deleteProduct(req.params.id).then((product) => {
-     return res.json({ success: true, message:"Success Delete" });
+    return res.json({ success: true, message: "Success Delete" });
   }).catch((error) => {
     return res.json({ success: false, message: error.message });
   });
 }
 
 async function insertMany(req, res, next) {
-  await productCtrl.insertMany(req.body).then((products) => {
-    return res.json({ success: true, products: products });
+  await productCtrl.insertMany(req.body).then((data) => {
+    return res.json({ success: true, products: data });
   }).catch((error) => {
     if (error.code === 11000) {
       let msg = error.keyPattern.barcode == 1 ? 'Product Barcode already exist!' : 'Product Name already exist!'

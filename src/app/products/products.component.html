@@ -4,7 +4,7 @@
   </div>
 
   <div class="col text-end">
-    <button type="button" class="btn btn-success" (click)="addProduct(content)">Add Product</button>
+    <button type="button" class="btn btn-success" (click)="openProductForm(content)">Add Product</button>
   </div>
 </div>
 
@@ -16,10 +16,10 @@
   <div class="modal-body">
     <div class="mb-3">
       <label for="name" class="form-label">Name</label>
-      <input type="text" autocomplete="false" [(ngModel)]="product.name" class="form-control" id="name" placeholder="name">
+      <input type="text" autocomplete="off" [(ngModel)]="product.name" class="form-control" id="name" placeholder="name">
     </div>
     <div class="mb-3">
-      <label for="barcode" class="form-label">Barcode</label>
+      <label for="barcode" autocomplete="off" class="form-label">Barcode</label>
       <input type="text" [(ngModel)]="product.barcode" class="form-control" id="barcode" placeholder="barcode">
     </div>
     <div class="mb-3">
@@ -41,4 +41,4 @@
 </ng-template>
 
 <mt-products-grid [produacts]="filteredProducts" [pageId]="pageId" (ChangesProducts)="changeGridData($event)"
-  (UpdateProduct)="getProductData(content, $event)"></mt-products-grid>
+  (UpdateProduct)="getProductDataFromGrid(content, $event)"></mt-products-grid>

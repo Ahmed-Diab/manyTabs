@@ -5,7 +5,8 @@ import { ModalService } from 'src/app/core/modal/modal.service';
 import { TabService } from 'src/app/tab.service';
 import { IProduct } from '../product.interface';
 import { ProductService } from '../product.service';
-
+import { db, DBRowStateType } from '../../db';
+import { NetworkConnectionService } from 'src/app/core/services/network-connection.service';
 @Component({
   selector: 'mt-products-grid',
   templateUrl: './products-grid.component.html',
@@ -13,7 +14,7 @@ import { ProductService } from '../product.service';
 })
 export class ProductsGridComponent implements OnInit, OnDestroy {
   @Input() produacts: IProduct[];
-  @Input() pageId:number;
+  @Input() pageId: number;
   @Output() UpdateProduct: EventEmitter<IProduct> = new EventEmitter<IProduct>();
   @Output() ChangesProducts: EventEmitter<IProduct[]> = new EventEmitter<IProduct[]>();
   subscriptions: Subscription = new Subscription();
@@ -22,7 +23,8 @@ export class ProductsGridComponent implements OnInit, OnDestroy {
     private moduleService: ModalService,
     private tabService: TabService,
     private productService: ProductService,
-    private growlService: GrowlerService
+    private growlService: GrowlerService,
+    private conctionService: NetworkConnectionService
   ) { }
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
@@ -36,20 +38,26 @@ export class ProductsGridComponent implements OnInit, OnDestroy {
     this.UpdateProduct.emit(product)
   }
 
-  deleteProduct(product: IProduct) {
-    this.moduleService.show({ body: `Are you shure you want to delete ${product.name}` }).then(okPressed => {
-      if (okPressed) {
-       this.subscriptions.add(this.productService.deleteProduct(product).subscribe((data) => {
-          if (data.success) {
-            this.produacts = this.produacts.filter(pro => pro._id !== product._id);
-            this.ChangesProducts.emit(this.produacts);
-            this.tabService.findByIdAndAddData(this.pageId, this.produacts);
-            this.growlService.growl(data.message, GrowlerMessageType.Success);
-          } else {
-            this.growlService.growl(data.message, GrowlerMessageType.Success);
-          }
-        }));
-      }
-    });
+  async deleteProduct(product: IProduct) {
+    if (!this.conctionService.isOnline) {
+      await db.deleteRecordFromLocaleDB("products", product);
+      this.produacts = await db.getAllDataFromLocaleDB("products");
+    } else {
+      this.moduleService.show({ body: `Are you shure you want to delete ${product.name}` }).then(okPressed => {
+        if (okPressed) {
+          this.subscriptions.add(this.productService.deleteProduct(product).subscribe(async (data) => {
+            if (data.success) {
+              await db.deleteRecordFromLocaleDB("products", product, DBRowStateType.ORIGINAL);
+              this.produacts = await db.getAllDataFromLocaleDB("products");
+              this.ChangesProducts.emit(this.produacts);
+              this.growlService.growl(data.message, GrowlerMessageType.Success);
+            } else {
+              this.growlService.growl(data.message, GrowlerMessageType.Success);
+            }
+          }));
+        }
+      });
+    }
+
   }
 }

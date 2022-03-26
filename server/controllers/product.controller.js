@@ -13,7 +13,8 @@ module.exports = {
   allProducts,
   insertMany,
   deleteProduct,
-  updateProduct
+  updateProduct,
+  deleteMany
 };
 
 async function updateProduct(product) {
@@ -28,6 +29,10 @@ async function updateProduct(product) {
 }
 async function insert(product) {
   return await new Product(product).save();
+}
+
+async function deleteMany(ids){
+  return await Product.deleteMany({_id:{$in:ids}}).then(data => data).catch(err => console.log(err.writeErrors));
 }
 
 async function insertMany(products) {

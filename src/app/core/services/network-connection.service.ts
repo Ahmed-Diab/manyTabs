@@ -1,35 +1,26 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-
+import { Subject } from 'rxjs';
+declare const window:any;
 @Injectable({
   providedIn: 'root'
 })
 export class NetworkConnectionService {
 
-  // public static status: ConnectionStatusEnum = ConnectionStatusEnum.Online;
-  // private static online$: Observable<string>;
-  // private static offline$: Observable<string>;
-  // public static init() {
-  //   NetworkConnectionService.online$ = Observable.(window, 'online');
-  //   NetworkConnectionService.offline$ = Observable.fromEvent(window, 'offline');
+  private internetConnctionChanged = new Subject<boolean>();
 
-  //   NetworkConnectionService.online$.subscribe(e => {
-  //     console.log('Online');
-  //     NetworkConnectionService.status = ConnectionStatusEnum.Online;
-  //   });
+  constructor() {
+    window.addEventListener('online', () => this.updateNetworkConnectionStatus())
+    window.addEventListener('offline', () => this.updateNetworkConnectionStatus())
+  }
+  get isOnline() {
+    return !!window.navigator.onLine;
+  }
+  get connctionChanged() {
+    return this.internetConnctionChanged.asObservable();
+  }
 
-  //   NetworkConnectionService.offline$.subscribe(e => {
-  //     console.log('Offline');
-  //     NetworkConnectionService.status = ConnectionStatusEnum.Offline;
-  //   });
-  // }
-
-  // constructor() {
-  //   NetworkConnection.init();
-  // }
-}
-
-export enum ConnectionStatusEnum {
-  Online,
-  Offline
+  private updateNetworkConnectionStatus() {
+    console.log(window.navigator.onLine);
+    this.internetConnctionChanged.next(window.navigator.onLine);
+  }
 }

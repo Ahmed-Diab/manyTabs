@@ -73,30 +73,30 @@ export class TabService {
     localStorage.setItem("openedTabs", JSON.stringify(tabs))
   }
 
-  async findByIdAndAddData(tabId: number, data: any[]) {
-    let tabs = await this.getTabsFromLocalStorge();
-    await tabs.forEach(obj => {
-      if (obj.id == tabId) {
-        obj.data = data;
-      }
-    });
-    await localStorage.setItem("openedTabs", JSON.stringify(tabs))
-  }
+  // async findByIdAndAddData(tabId: number, data: any[]) {
+  //   let tabs = await this.getTabsFromLocalStorge();
+  //   await tabs.forEach(obj => {
+  //     if (obj.id == tabId) {
+  //       obj.data = data;
+  //     }
+  //   });
+  //   await localStorage.setItem("openedTabs", JSON.stringify(tabs))
+  // }
   // to update tabs Data if Changed
-  findByIdAndUpdateData(tabId: number, data: any) {
-    let tabs = this.getTabsFromLocalStorge();
-    tabs.forEach(obj => {
-      if (obj.id == tabId) {
-        // filter to find data by id and update
-        obj.data = obj.data.filter((x: any) => {
-          if (x._id === data._id) {
-            x = data;
-          }
-        });
-      }
-    });
-    localStorage.setItem("openedTabs", JSON.stringify(tabs))
-  }
+  // findByIdAndUpdateData(tabId: number, data: any) {
+  //   let tabs = this.getTabsFromLocalStorge();
+  //   tabs.forEach(obj => {
+  //     if (obj.id == tabId) {
+  //       // filter to find data by id and update
+  //       obj.data = obj.data.filter((x: any) => {
+  //         if (x._id === data._id) {
+  //           x = data;
+  //         }
+  //       });
+  //     }
+  //   });
+  //   localStorage.setItem("openedTabs", JSON.stringify(tabs))
+  // }
 }
 export interface ITab {
   id: number;
