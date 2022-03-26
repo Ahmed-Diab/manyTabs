@@ -1,24 +1,44 @@
-<div>
-  <table class="table table-striped">
-    <thead>
-    <tr>
-      <th scope="col">Id</th>
-      <th scope="col">Name</th>
-      <th scope="col">Barcode</th>
-      <th scope="col">Price</th>
-      <th scope="col">Current Balance</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let product of productsData; index as i">
-      <th scope="row">{{ product.id }}</th>
-      <td>
-         {{ product.name | titlecase}}
-      </td>
-      <td>{{ product.barcode  }}</td>
-      <td>{{ product.price  }}</td>
-      <td>{{ product.currentBalance  }}</td>
-    </tr>
-    </tbody>
-  </table>
+<div class="row align-items-start mt-3">
+  <div class="col">
+    <mt-filter-textbox class="navbar-right" (changed)="filterChanged($event)"></mt-filter-textbox>
+  </div>
+
+  <div class="col text-end">
+    <button type="button" class="btn btn-success" (click)="addProduct(content)">Add Product</button>
+  </div>
 </div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">{{product._id != undefined?"Update Product" :"Add New Product"}}</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="mb-3">
+      <label for="name" class="form-label">Name</label>
+      <input type="text" autocomplete="false" [(ngModel)]="product.name" class="form-control" id="name" placeholder="name">
+    </div>
+    <div class="mb-3">
+      <label for="barcode" class="form-label">Barcode</label>
+      <input type="text" [(ngModel)]="product.barcode" class="form-control" id="barcode" placeholder="barcode">
+    </div>
+    <div class="mb-3">
+      <label for="price" class="form-label">Price</label>
+      <input type="number" [(ngModel)]="product.price" class="form-control" id="price" placeholder="price">
+    </div>
+    <div class="mb-3">
+      <label for="balance" class="form-label">Balance</label>
+      <input type="number" [(ngModel)]="product.balance" class="form-control" id="balance" placeholder="balance">
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button *ngIf="product._id == undefined" type="button" class="btn btn-success"
+      (click)="addNewProduct()">save</button>
+    <button *ngIf="product._id != undefined" type="button" class="btn btn-success" (click)="updateProduct(modal)">save
+      updates</button>
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Cansle</button>
+  </div>
+</ng-template>
+
+<mt-products-grid [produacts]="filteredProducts" [pageId]="pageId" (ChangesProducts)="changeGridData($event)"
+  (UpdateProduct)="getProductData(content, $event)"></mt-products-grid>

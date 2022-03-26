@@ -1,7 +1,7 @@
 export interface IProduct{
-    id:number;
+    _id?:string;
     name:string;
     barcode:string;
     price:number;
-    currentBalance:number;
+    balance:number;
 }

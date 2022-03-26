@@ -19,9 +19,11 @@ export class TabService {
   constructor(
     private router: Router
   ) { }
+
   onTabChange(key: any) {
     this.tabChanged.next(key);
   }
+
   addTab(url: string) {
     const tab: any = this.getTabOptionByUrl(url);
     if (!this.tabs.includes(tab)) {
@@ -42,7 +44,6 @@ export class TabService {
     this.tabs.splice(index, 1);
     let openedTabs: ITab[] = this.getTabsFromLocalStorge();
     openedTabs = openedTabs.filter(p => p.id !== tab.id);
-
     if (openedTabs.length > 0) {
       this.onTabChange(openedTabs[0])
       this.router.navigateByUrl(openedTabs[0].url)
@@ -67,6 +68,31 @@ export class TabService {
     tabs.forEach(obj => {
       if (obj.id == tab.id) {
         obj.data = data;
+      }
+    });
+    localStorage.setItem("openedTabs", JSON.stringify(tabs))
+  }
+
+  async findByIdAndAddData(tabId: number, data: any[]) {
+    let tabs = await this.getTabsFromLocalStorge();
+    await tabs.forEach(obj => {
+      if (obj.id == tabId) {
+        obj.data = data;
+      }
+    });
+    await localStorage.setItem("openedTabs", JSON.stringify(tabs))
+  }
+  // to update tabs Data if Changed
+  findByIdAndUpdateData(tabId: number, data: any) {
+    let tabs = this.getTabsFromLocalStorge();
+    tabs.forEach(obj => {
+      if (obj.id == tabId) {
+        // filter to find data by id and update
+        obj.data = obj.data.filter((x: any) => {
+          if (x._id === data._id) {
+            x = data;
+          }
+        });
       }
     });
     localStorage.setItem("openedTabs", JSON.stringify(tabs))

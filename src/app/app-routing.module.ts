@@ -3,8 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CountresComponent } from './countres/countres.component';
 import { CustomersComponent } from './customers/customers.component';
 import { HomeComponent } from './home/home.component';
-import { ProductsComponent } from './products/products.component';
- const routes: Routes = [
+  const routes: Routes = [
   {
     path:"",
     redirectTo:"home",
@@ -20,8 +19,8 @@ import { ProductsComponent } from './products/products.component';
   },
   {
     path: 'products',
-    component: ProductsComponent,
-  },
+    loadChildren:() => import("../app/products/product.module").then(m=>m.ProductModule)
+   },
   {
     path: 'cuntries',
     component: CountresComponent,

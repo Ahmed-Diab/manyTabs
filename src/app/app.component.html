@@ -1,10 +1,29 @@
+
+<!-- <main class="container"> -->
+  <mt-navbar></mt-navbar>
+
+  <div class="container">
+    <app-main-content class="main-content-container"></app-main-content>
+
+    <router-outlet></router-outlet>
+    <mt-growler position="top-right" [timeout]="2000"></mt-growler>
+    <mt-modal></mt-modal>
+    
+  <mt-overlay [delay]="3000">
+    <span class="spinner"></span>&nbsp;&nbsp;&nbsp; Loading
+</mt-overlay>
+  </div>
+
+
+<!-- </main> -->
+<!--
 <div class="app-container">
 
   <div class="sidebar">
     <app-menu class="menu-bar"></app-menu>
   </div>
-  
+
   <div class="content">
     <app-main-content class="main-content-container"></app-main-content>
   </div>
-</div>
+</div> -->
