@@ -1,7 +1,7 @@
+
+import { Router } from '@angular/router';
 import { ITab, TabService } from './../tab.service';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Router } from '@angular/router';
-
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',

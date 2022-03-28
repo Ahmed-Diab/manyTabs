@@ -1,22 +1,40 @@
+<div class="row align-items-start mt-3">
+  <div class="col">
+    <mt-filter-textbox class="navbar-right" (changed)="filterChanged($event)"></mt-filter-textbox>
+  </div>
 
-<table class="table table-striped">
-    <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Name</th>
-      <th scope="col">Email</th>
-      <th scope="col">Phone</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let customer of customersData; index as i">
-      <th scope="row">{{ i + 1 }}</th>
-      <td>
-        
-         {{ customer.name | titlecase}}
-      </td>
-      <td>{{ customer.email  }}</td>
-      <td>{{ customer.phoneNumber  }}</td>
-    </tr>
-    </tbody>
-  </table>
+  <div class="col text-end">
+    <button type="button" class="btn btn-success" (click)="openCustomerForm(content)">Add Customer</button>
+  </div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">{{customer._id != undefined?"Update Customer" :"Add New Customer"}}</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="mb-3">
+      <label for="name" class="form-label">Name</label>
+      <input type="text" autocomplete="off" [(ngModel)]="customer.name" class="form-control" id="name" placeholder="name">
+    </div>
+    <div class="mb-3">
+      <label for="barcode" autocomplete="off" class="form-label">Email</label>
+      <input type="email" [(ngModel)]="customer.email" class="form-control" id="barcode" placeholder="barcode">
+    </div>
+    <div class="mb-3">
+      <label for="barcode" autocomplete="off" class="form-label">Phone Number</label>
+      <input type="email" [(ngModel)]="customer.phoneNumber" class="form-control" id="barcode" placeholder="barcode">
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button *ngIf="customer._id == undefined" type="button" class="btn btn-success"
+      (click)="addNewCustomer()">save</button>
+    <button *ngIf="customer._id != undefined" type="button" class="btn btn-success" (click)="updateCustomer(modal)">save
+      updates</button>
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Cansle</button>
+  </div>
+</ng-template>
+
+<mt-customer-grid [customers]="filteredCustomers" [pageId]="pageId" (ChangesCustomers)="changeGridData($event)"
+  (UpdateCustomer)="getCustomerDataFromGrid(content, $event)"></mt-customer-grid>

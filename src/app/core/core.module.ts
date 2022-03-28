@@ -1,30 +1,30 @@
-import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-
-import { GrowlerModule } from './growler/growler.module';
 import { ModalModule } from './modal/modal.module';
+import { AuthService } from './services/auth.service';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { GrowlerModule } from './growler/growler.module';
 import { OverlayModule } from './overlay/overlay.module';
-
-import { DataService } from './services/data.service';
-import { NavbarComponent } from './navbar/navbar.component';
 import { FilterService } from './services/filter.service';
 import { SorterService } from './services/sorter.service';
-import { TrackByService } from './services/trackby.service';
 import { DialogService } from './services/dialog.service';
-import { EnsureModuleLoadedOnceGuard } from './ensure-module-loaded-once.guard';
-import { AuthService } from './services/auth.service';
+import { TrackByService } from './services/trackby.service';
+import { NavbarComponent } from './navbar/navbar.component';
+import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { EventBusService } from './services/event-bus.service';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
- import { NetworkConnectionService } from './services/network-connection.service';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { NetworkConnectionService } from './services/network-connection.service';
+import { EnsureModuleLoadedOnceGuard } from './ensure-module-loaded-once.guard';
+
 
 @NgModule({
-  imports: [CommonModule, RouterModule, HttpClientModule, GrowlerModule, ModalModule, OverlayModule, NgbModule,],
-  exports: [GrowlerModule, RouterModule, HttpClientModule, ModalModule, OverlayModule, NavbarComponent, NgbModule],
+  imports: [CommonModule, RouterModule, HttpClientModule, GrowlerModule,
+    ModalModule, OverlayModule, NgbModule,],
+  exports: [GrowlerModule, RouterModule, HttpClientModule, ModalModule, OverlayModule,
+    NavbarComponent, NgbModule],
   declarations: [NavbarComponent],
-  providers: [SorterService, FilterService, DataService, TrackByService,
+  providers: [SorterService, FilterService, TrackByService,
     DialogService, AuthService, EventBusService, NetworkConnectionService,
     {
       provide: HTTP_INTERCEPTORS,

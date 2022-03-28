@@ -1,9 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import Dexie from 'dexie';
+import { IProduct } from './product.interface';
+import { HttpClient } from '@angular/common/http';
 import { catchError, map, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { IProduct } from './product.interface';
 
 @Injectable({
   providedIn: 'root'

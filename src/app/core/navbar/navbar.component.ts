@@ -17,7 +17,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     isCollapsed: boolean;
     loginLogoutText = 'Login';
     sub: Subscription;
-
+    navbarCollapsed:boolean = true;
     menuOptions: ITab[] = [];
     @Output() TabEvent = new EventEmitter<ITab>();
     constructor(private router: Router,

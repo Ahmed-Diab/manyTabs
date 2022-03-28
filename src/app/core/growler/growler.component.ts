@@ -11,7 +11,7 @@ import { LoggerService } from '../services/logger.service';
       </div>
     </div>
   `,
-  styleUrls: ['growler.component.css']
+  styleUrls: ['growler.component.scss']
 })
 export class GrowlerComponent implements OnInit {
 

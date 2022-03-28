@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 @Component({
     selector: 'mt-overlay',
     templateUrl: './overlay.component.html',
-    styleUrls: ['./overlay.component.css']
+    styleUrls: ['./overlay.component.scss']
 })
 export class OverlayComponent implements OnInit, OnDestroy {
 

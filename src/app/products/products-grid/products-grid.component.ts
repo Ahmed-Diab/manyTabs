@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { GrowlerMessageType, GrowlerService } from 'src/app/core/growler/growler.service';
-import { ModalService } from 'src/app/core/modal/modal.service';
-import { TabService } from 'src/app/tab.service';
-import { IProduct } from '../product.interface';
-import { ProductService } from '../product.service';
 import { db, DBRowStateType } from '../../db';
+import { IProduct } from '../product.interface';
+import { TabService } from 'src/app/tab.service';
+import { ProductService } from '../product.service';
+import { ModalService } from 'src/app/core/modal/modal.service';
+import { GrowlerMessageType, GrowlerService } from 'src/app/core/growler/growler.service';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { NetworkConnectionService } from 'src/app/core/services/network-connection.service';
 @Component({
   selector: 'mt-products-grid',

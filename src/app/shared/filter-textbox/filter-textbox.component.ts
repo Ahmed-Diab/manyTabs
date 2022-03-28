@@ -3,7 +3,7 @@ import { Component, Output, EventEmitter } from '@angular/core';
 @Component({
   selector: 'mt-filter-textbox',
   templateUrl: './filter-textbox.component.html',
-  styleUrls: [ './filter-textbox.component.css' ]
+  styleUrls: [ './filter-textbox.component.scss' ]
 })
 export class FilterTextboxComponent {
 

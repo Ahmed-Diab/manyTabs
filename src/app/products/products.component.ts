@@ -78,10 +78,15 @@ export class ProductsComponent implements OnInit, OnDestroy {
   async addNewProduct() {
     // add data to Local DB if Offline
     if (!this.conctionService.isOnline) {
-      await db.addRecordToLocaleDB('products', this.product);
-      this.productsData = await db.getAllDataFromLocaleDB("products");
-      this.filteredProducts = await db.getAllDataFromLocaleDB("products");
-      this.product = { _id: undefined, name: '', barcode: '', price: 0, balance: 0 };
+      let product = this.productsData.find(p => p.name == this.product.name || p.barcode == this.product.barcode);
+      if (product) {
+        this.growlService.growl("product name and barcode must be uniqe and atlest one of this is alredy exist in our database ", GrowlerMessageType.Danger)
+      } else {
+        await db.addRecordToLocaleDB('products', this.product);
+        this.productsData = await db.getAllDataFromLocaleDB("products");
+        this.filteredProducts = await db.getAllDataFromLocaleDB("products");
+        this.product = { _id: undefined, name: '', barcode: '', price: 0, balance: 0 };
+      }
       // add data to Server if is Online
     } else {
       this.subscriptions.add(this.productService.addNewProduct(this.product).subscribe(async data => {
@@ -130,9 +135,9 @@ export class ProductsComponent implements OnInit, OnDestroy {
     }
   };
 
-////////////////////////////////////////////////////////           
-//////////////// >>> PWA <<<<<<<///////////////////////
-//////////////////////////////////////////////////////     
+  ////////////////////////////////////////////////////////           
+  //////////////// >>> PWA <<<<<<<///////////////////////
+  //////////////////////////////////////////////////////     
 
   ////// this function to do check if the connction Changed to update data from Local DB to server DB
   private listenToConctionEvent(conction: NetworkConnectionService) {

@@ -1,5 +1,6 @@
 import Dexie, { Table } from 'dexie';
 import { IProduct } from './products/product.interface';
+import { ICustomer } from './customers/customer.interface';
 
 export enum DBRowStateType {
     DELETED = "Deleted",
@@ -10,17 +11,32 @@ export enum DBRowStateType {
 
 export class AppDB extends Dexie {
     products!: Table<IProduct, number>;
+    customers!: Table<ICustomer, number>;
     constructor() {
         super('manyTabs');
         this.version(3).stores({
-            products: '++localId, state'
+            products: '++localId, state',
+            customers: '++localId, state'
+        });
+    }
+
+    initLocalDB(){
+        Dexie.exists('manyTabs').then(function (exists) {
+            if (!exists) {
+                var db = new Dexie('manyTabs');
+                db.version(3).stores({
+                    products: '++localId, state',
+                    customers: '++localId, state'
+                });
+                db.open();
+            }
         });
     }
     // Dexie Code To Add New Record TO Local DB 
     async addRecordToLocaleDB(table: string, data: any, state: string = DBRowStateType.ADDED) {
         data.state = state;
         if (data._id == undefined || data._id == "") {
-            let newId = (await db.table("products").toArray()).length + 1
+            let newId = (await db.table(table).toArray()).length + 1
             data._id = newId.toString();
         }
         await db.table(table).add(data);

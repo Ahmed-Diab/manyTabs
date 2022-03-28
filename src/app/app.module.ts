@@ -1,25 +1,23 @@
-import { HomeComponent } from './home/home.component';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { AppRoutingModule } from './app-routing.module';
+
 import { AppComponent } from './app.component';
-import { MenuComponent } from './menu/menu.component';
-import { MainContentComponent } from './main-content/main-content.component';
-import { CustomersComponent } from './customers/customers.component';
-import { CountresComponent } from './countres/countres.component';
 import { CoreModule } from './core/core.module';
+import { MenuComponent } from './menu/menu.component';
 import { SharedModule } from './shared/shared.module';
-import { ServiceWorkerModule } from '@angular/service-worker';
+import { HomeComponent } from './home/home.component';
+import { AppRoutingModule } from './app-routing.module';
+import { BrowserModule } from '@angular/platform-browser';
 import { environment } from '../environments/environment';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { MainContentComponent } from './main-content/main-content.component';
+
  @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     MenuComponent,
     MainContentComponent,
-    CustomersComponent,
-    CountresComponent,
-    
+ 
 
   ],
   imports: [

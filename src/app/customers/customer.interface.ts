@@ -1,6 +1,8 @@
 export interface ICustomer {
-    id:number;
-    name:string;
-    email:string;
-    phoneNumber:string;
+    localId?: number;
+    _id?: string;
+    state?: string;
+    name: string;
+    email: string;
+    phoneNumber: string;
 }

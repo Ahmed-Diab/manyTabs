@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
+import { Router } from '@angular/router';
+import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +12,9 @@ export class TabService {
   tabChanged$ = this.tabChanged.asObservable();
   tabOptions: ITab[] = [
     { id: 1, name: 'Customers', url: '/customers', data: [], isActive: false },
-    { id: 2, name: 'Cuntries', url: '/cuntries', data: [], isActive: false },
-    { id: 3, name: 'Products', url: '/products', data: [], isActive: false }
+    { id: 3, name: 'Products', url: '/products', data: [], isActive: false },
+    { id: 2, name: 'Orders', url: '/orders', data: [], isActive: false },
+
   ];
 
   constructor(
