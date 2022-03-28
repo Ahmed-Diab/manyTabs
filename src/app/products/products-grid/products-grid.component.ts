@@ -40,8 +40,12 @@ export class ProductsGridComponent implements OnInit, OnDestroy {
 
   async deleteProduct(product: IProduct) {
     if (!this.conctionService.isOnline) {
-      await db.deleteRecordFromLocaleDB("products", product);
-      this.produacts = await db.getAllDataFromLocaleDB("products");
+      this.moduleService.show({ body: `Are you sure you want to delete ${product.name}` }).then(async okPressed => {
+        if (okPressed) {
+          await db.deleteRecordFromLocaleDB("products", product);
+          this.produacts = await db.getAllDataFromLocaleDB("products");
+        }
+      })
     } else {
       this.moduleService.show({ body: `Are you shure you want to delete ${product.name}` }).then(okPressed => {
         if (okPressed) {
@@ -52,7 +56,7 @@ export class ProductsGridComponent implements OnInit, OnDestroy {
               this.ChangesProducts.emit(this.produacts);
               this.growlService.growl(data.message, GrowlerMessageType.Success);
             } else {
-              this.growlService.growl(data.message, GrowlerMessageType.Success);
+              this.growlService.growl(data.message, GrowlerMessageType.Danger);
             }
           }));
         }

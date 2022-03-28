@@ -1,12 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { IProduct } from './product.interface';
-import { TabService } from '../tab.service';
-import { FilterService } from '../core/services/filter.service';
-import { ProductService } from './product.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { GrowlerMessageType, GrowlerService } from '../core/growler/growler.service';
+
 import { Subscription } from 'rxjs';
 import { db, DBRowStateType } from '../db';
+import { IProduct } from './product.interface';
+import { ProductService } from './product.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FilterService } from '../core/services/filter.service';
+import { GrowlerMessageType, GrowlerService } from '../core/growler/growler.service';
 import { NetworkConnectionService } from '../core/services/network-connection.service';
 
 @Component({
@@ -23,7 +23,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   constructor(
     private productService: ProductService,
-    private tabService: TabService,
     private filterService: FilterService,
     private modalService: NgbModal,
     private growlService: GrowlerService,
@@ -32,7 +31,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this.listenToConctionEvent(this.conctionService)
   }
 
-
   ngOnInit(): void {
     this.getProducts();
   }
@@ -40,53 +38,6 @@ export class ProductsComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
-  private listenToConctionEvent(conction: NetworkConnectionService) {
-    conction.connctionChanged.subscribe(async (online) => {
-      if (online) {
-        let addedData = await db.getDataByState("products", DBRowStateType.ADDED);
-        let deletedData = await db.getDataByState("products", DBRowStateType.DELETED);
-        if (addedData != null) await this.addNewBulkOfProductsFromLocalDB(addedData);
-        if (deletedData != null) await this.deleteBulkOfProductsFromLocalDB(deletedData);
-        console.log("went online");
-      } else {
-        console.log('went offline');
-      }
-    });
-  }
-
-  //////////////////  update offline data ///////////////
-  async deleteBulkOfProductsFromLocalDB(deletedData: any) {
-    if (deletedData != null) {
-      let ids: string[] = [];
-      let localIds: number[] = [];
-      deletedData?.data?.forEach((obj: any) => {
-        ids.push(obj._id);
-        localIds.push(obj.localId);
-      });
-      await this.productService.deleteBulkProduct(ids).subscribe(async (res) => {
-        if (res.success) {
-          await db.deleteBulkFromLocaleDB("products", localIds);
-          this.productsData = await db.getAllDataFromLocaleDB("products");
-          this.filteredProducts = await db.getAllDataFromLocaleDB("products");
-        }
-      });
-    }
-
-
-  }
-  async addNewBulkOfProductsFromLocalDB(addedData: any) {
-    if (addedData != null) {
-      await this.productService.addBulkProduct(addedData.data).subscribe(async (res) => {
-        if (res.success) {
-          await db.deleteBulkFromLocaleDB("products", addedData.ids);
-          let data: IProduct[] = res.products?.filter((p: IProduct, index: number) => res.products[index].state = "Original")
-          await db.addBulkOfDataToLocaleDB("products", data);
-          this.productsData = await db.getAllDataFromLocaleDB("products");
-          this.filteredProducts = await db.getAllDataFromLocaleDB("products");
-        }
-      });
-    }
-  }
 
   changeGridData(products: IProduct[]) {
     this.filteredProducts = products;
@@ -112,32 +63,33 @@ export class ProductsComponent implements OnInit, OnDestroy {
         // add Data to localDB
         let products: any[] = await data.products?.filter((p: IProduct, index: number) => data.products[index].state = "Original")
         await db.addBulkOfDataToLocaleDB("products", products);
+        // get data from local DB After DB Setting localID
         this.productsData = await db.getAllDataFromLocaleDB("products");
-        this.filteredProducts = await db.getAllDataFromLocaleDB("products");
+        this.filteredProducts = this.productsData;
       }));
     }
   }
-
+  // to opem Form To Add New Data and Clear Product Object
   openProductForm(content: any) {
     this.product = { _id: undefined, name: '', barcode: '', price: 0, balance: 0 }
     this.modalService.open(content, { centered: true });
   }
-
+  // Add New Product
   async addNewProduct() {
+    // add data to Local DB if Offline
     if (!this.conctionService.isOnline) {
       await db.addRecordToLocaleDB('products', this.product);
       this.productsData = await db.getAllDataFromLocaleDB("products");
       this.filteredProducts = await db.getAllDataFromLocaleDB("products");
       this.product = { _id: undefined, name: '', barcode: '', price: 0, balance: 0 };
-
+      // add data to Server if is Online
     } else {
       this.subscriptions.add(this.productService.addNewProduct(this.product).subscribe(async data => {
         if (data.success) {
           this.product = { _id: undefined, name: '', barcode: '', price: 0, balance: 0 };
-          console.log(data.product);
           await db.addRecordToLocaleDB('products', data.product, DBRowStateType.ORIGINAL);
           this.productsData = await db.getAllDataFromLocaleDB("products");
-          this.filteredProducts = await db.getAllDataFromLocaleDB("products");
+          this.filteredProducts = this.productsData;
           this.growlService.growl(data.message, GrowlerMessageType.Success);
         } else {
           this.growlService.growl(data.message, GrowlerMessageType.Danger);
@@ -146,23 +98,28 @@ export class ProductsComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Update Product
   updateProduct(modal: any) {
+    // Update data to Local DB if Offline
     if (!this.conctionService.isOnline) {
       db.updateRecordFromLocaleDB('products', this.product);
+      this.growlService.growl("Sussess update", GrowlerMessageType.Success);
+      modal.dismiss()
     } else {
-      this.subscriptions.add(this.productService.updateProduct(this.product).subscribe(data => {
+      // Update data to Server if is Online
+      this.subscriptions.add(this.productService.updateProduct(this.product).subscribe(async data => {
         if (data.success) {
-          db.updateRecordFromLocaleDB('products', this.product, DBRowStateType.ORIGINAL);
+          data.product.localId = this.product.localId;
+          await db.updateRecordFromLocaleDB('products', data.product, DBRowStateType.ORIGINAL);
           this.growlService.growl(data.message, GrowlerMessageType.Success);
-          modal.dismiss()
+          modal.dismiss();
         } else {
           this.growlService.growl(data.message, GrowlerMessageType.Danger);
         }
       }));
     }
-
   }
-
+  // filtring products data by name or barcode
   filterChanged(data: any) {
     if (data && this.productsData) {
       data = data.toUpperCase();
@@ -173,4 +130,69 @@ export class ProductsComponent implements OnInit, OnDestroy {
     }
   };
 
+////////////////////////////////////////////////////////           
+//////////////// >>> PWA <<<<<<<///////////////////////
+//////////////////////////////////////////////////////     
+
+  ////// this function to do check if the connction Changed to update data from Local DB to server DB
+  private listenToConctionEvent(conction: NetworkConnectionService) {
+    conction.connctionChanged.subscribe(async (online) => {
+      if (online) {
+        let addedData = await db.getDataByState("products", DBRowStateType.ADDED);
+        let updatedData = await db.getDataByState("products", DBRowStateType.UPDATED);
+        let deletedData = await db.getDataByState("products", DBRowStateType.DELETED);
+        if (addedData != null) await this.addNewBulkOfProductsFromLocalDB(addedData);
+        if (updatedData != null) await this.updateBulkOfProductsFromLocalDB(updatedData);
+        if (deletedData != null) await this.deleteBulkOfProductsFromLocalDB(deletedData);
+        console.log("went online");
+      } else {
+        console.log('went offline');
+      }
+    });
+  }
+
+  //////////////////  Update  Bulk Of Products  >>> PWA <<< ///////////////
+  async updateBulkOfProductsFromLocalDB(updatedData: any) {
+    let localIds: number[] = [];
+    updatedData?.data?.forEach((obj: any) => {
+      localIds.push(obj.localId);
+    });
+    await this.productService.updateBulkProduct(updatedData.data).subscribe(async (res) => {
+      if (res.success) {
+        await db.deleteBulkFromLocaleDB("products", localIds);
+        let data: IProduct[] = res.products?.filter((p: IProduct, index: number) => res.products[index].state = "Original")
+        await db.addBulkOfDataToLocaleDB("products", data);
+        this.productsData = await db.getAllDataFromLocaleDB("products");
+        this.filteredProducts = await db.getAllDataFromLocaleDB("products");
+      }
+    });
+  }
+  //////////////////  Delete  Bulk Of Products  >>> PWA <<< ///////////////
+  async deleteBulkOfProductsFromLocalDB(deletedData: any) {
+    let ids: string[] = [];
+    let localIds: number[] = [];
+    deletedData?.data?.forEach((obj: any) => {
+      ids.push(obj._id);
+      localIds.push(obj.localId);
+    });
+    await this.productService.deleteBulkProduct(ids).subscribe(async (res) => {
+      if (res.success) {
+        await db.deleteBulkFromLocaleDB("products", localIds);
+        this.productsData = await db.getAllDataFromLocaleDB("products");
+        this.filteredProducts = await db.getAllDataFromLocaleDB("products");
+      }
+    });
+  }
+  //////////////////  Add  Bulk Of Products  >>> PWA <<< ///////////////
+  async addNewBulkOfProductsFromLocalDB(addedData: any) {
+    await this.productService.addBulkProduct(addedData.data).subscribe(async (res) => {
+      if (res.success) {
+        await db.deleteBulkFromLocaleDB("products", addedData.ids);
+        let data: IProduct[] = res.products?.filter((p: IProduct, index: number) => res.products[index].state = "Original")
+        await db.addBulkOfDataToLocaleDB("products", data);
+        this.productsData = await db.getAllDataFromLocaleDB("products");
+        this.filteredProducts = await db.getAllDataFromLocaleDB("products");
+      }
+    });
+  }
 }

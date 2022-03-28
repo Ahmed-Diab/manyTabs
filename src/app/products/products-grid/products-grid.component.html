@@ -11,7 +11,7 @@
   </thead>
   <tbody>
     <tr *ngFor="let product of produacts; index as i">
-      <th scope="row">{{ i+1 }}</th>
+      <th scope="row" [ngClass]="product.state == 'Original' ? 'b-safed': 'b-not-safed'" >{{ i+1 }}</th>
       <td>
         {{ product.name | titlecase}}
       </td>

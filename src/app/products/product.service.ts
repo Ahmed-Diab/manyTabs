@@ -12,6 +12,7 @@ export class ProductService {
   constructor(
     private http: HttpClient
   ) { }
+
   // get all products from server
   getAllProducts() {
     return this.http.get<{ success: boolean, products: IProduct[] }>(`${environment.apiURL}/products`).pipe(
@@ -21,6 +22,7 @@ export class ProductService {
       catchError(this.handleError)
     );
   }
+
   // add new product
   addNewProduct(product: IProduct) {
     return this.http.post<{ success: boolean, product: IProduct, message: string }>(`${environment.apiURL}/products/create`, product).pipe(
@@ -30,26 +32,7 @@ export class ProductService {
       catchError(this.handleError)
     );
   }
-  //  add list of products
-  addBulkProduct(products: IProduct[]) {
-    if (products) {
-      return this.http.post<{ success: boolean, products: IProduct[], message: string }>(`${environment.apiURL}/products/createMany`, products).pipe(
-        map(products => products),
-        catchError(this.handleError)
-      );
-    }
-    return null;
-  }
 
-  deleteBulkProduct(ids: string[]) {
-    if (ids && ids.length > 0) {
-      return this.http.post<{ success: boolean, message: string }>(`${environment.apiURL}/products/deleteMany`, ids).pipe(
-        map(data => data),
-        catchError(this.handleError)
-      );
-    }
-    return null;
-  }
   // update product
   updateProduct(product: IProduct) {
     return this.http.put<{ success: boolean, product: IProduct, message: string }>(`${environment.apiURL}/products/update`, product).pipe(
@@ -67,6 +50,37 @@ export class ProductService {
       }),
       catchError(this.handleError)
     );
+  }
+
+  /////////////// >>> Handling PWA <<<<<<<<\\\\\\\\\\\\\\\\
+  //  add Bulk of products >>> PWA <<<
+  addBulkProduct(products: IProduct[]) {
+    if (products) {
+      return this.http.post<{ success: boolean, products: IProduct[], message: string }>(`${environment.apiURL}/products/createMany`, products).pipe(
+        map(products => products),
+        catchError(this.handleError)
+      );
+    }
+    return null;
+  }
+
+  //  Update Bulk of products >>> PWA <<<
+  updateBulkProduct(data: any[]) {
+    return this.http.post<{ success: boolean, products: IProduct[] }>(`${environment.apiURL}/products/updateMany`, data).pipe(
+      map(data => data),
+      catchError(this.handleError)
+    );
+  }
+
+  //  Delete Bulk of products >>> PWA <<<
+  deleteBulkProduct(ids: string[]) {
+    if (ids && ids.length > 0) {
+      return this.http.post<{ success: boolean, message: string }>(`${environment.apiURL}/products/deleteMany`, ids).pipe(
+        map(data => data),
+        catchError(this.handleError)
+      );
+    }
+    return null;
   }
   // handle errors
   handleError(error: any) {

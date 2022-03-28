@@ -1,23 +1,88 @@
 const express = require('express');
 const asyncHandler = require('express-async-handler');
-const productCtrl = require('../controllers/product.controller');
+const customerCtrl = require('../controllers/customer.controller');
+const Customer = require('../models/customer.model');
 
 const router = express.Router();
 module.exports = router;
-router.get('/', (req, res) => {
-  res.json({message:'GET request to the homepage'})
-});
+router.get('/', asyncHandler(getAllCustomers));
+router.post('/create', asyncHandler(insert));
+router.put('/update', asyncHandler(updateCustomer));
+router.delete('/:id', asyncHandler(deleteCustomer));
+router.post('/createMany', asyncHandler(insertMany));
+router.post('/deleteMany', asyncHandler(deleteMany));
+router.post('/updateMany', asyncHandler(updateMany));
 
-// create new product
-async function create(req, res, next) {
-  let product = await productCtrl.insert(req.body);
-  product = product.toObject();
-  req.product = product;
-  next();
+async function getAllCustomers(req, res) {
+  await customerCtrl.allCustomers().then(customers => {
+    return res.json({ success: true, customers: customers });
+  }).catch((error) => {
+    return res.json({ success: false, message: error.message });
+  })
 }
- 
-  
-function product(req, res) {
-  let product = req.product;
-  res.json({ product });
+
+async function insert(req, res, next) {
+  await customerCtrl.insert(req.body).then((customer) => {
+    return res.json({ success: true, customer: customer, message: "Success Add" });
+  }).catch((error) => {
+    if (error.code === 11000) {
+      let msg = error.keyPattern.phoneNumber == 1 ? 'Customer Phone Number already exist!' : 'Customer Email already exist!'
+      return res.json({ success: false, message: msg });
+    }
+    return res.json({ success: false, message: error.message });
+  });
+}
+
+async function updateCustomer(req, res, next) {
+  await customerCtrl.updateCustomer(req.body).then((customer) => {
+    return res.json({ success: true, customer: customer, message: "Success Update" });
+  }).catch((error) => {
+    if (error.code === 11000) {
+      let msg = error.keyPattern.phoneNumber == 1 ? 'Customer Phone Number already exist!' : 'Customer Email already exist!'
+      return res.json({ success: false, message: msg });
+    }
+    return res.json({ success: false, message: error.message });
+  });
+}
+
+async function deleteCustomer(req, res, next) {
+  await customerCtrl.deleteCustomer(req.params.id).then((customer) => {
+    return res.json({ success: true, message: "Success Delete" });
+  }).catch((error) => {
+    return res.json({ success: false, message: error.message });
+  });
+}
+
+async function updateMany(req, res, next) {
+  var updatedCustomers = [];
+  await Promise.all(
+    req.body.map(async obj => {
+      await customerCtrl.updateCustomer(obj).then(async (customer) => {
+        if (customer) {
+          await updatedCustomers.push(customer);
+        }
+      })
+    })
+  );
+  return res.json({ success: true, customers: await updatedCustomers });
+}
+
+async function insertMany(req, res, next) {
+  await customerCtrl.insertMany(req.body).then((data) => {
+    return res.json({ success: true, customers: data });
+  }).catch((error) => {
+    if (error.code === 11000) {
+      let msg = error.keyPattern.phoneNumber == 1 ? 'Customer Phone Number already exist!' : 'Customer Email already exist!'
+      return res.json({ success: false, message: msg });
+    }
+    return res.json({ success: false, message: error.message });
+  });
+}
+
+async function deleteMany(req, res, next) {
+  await customerCtrl.deleteMany(req.body).then((data) => {
+    return res.json({ success: true, data: data, message: "Success Deleted" });
+  }).catch((error) => {
+    return res.json({ success: false, message: error.message });
+  });
 }

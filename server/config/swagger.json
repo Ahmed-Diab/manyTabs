@@ -79,10 +79,96 @@
         }
       }
     },
-    "/product/add": {
+    "/products": {
+      "get": {
+        "tags": [
+          "Product"
+        ],
+        "responses": {
+          "200": {
+             "schema":{
+              "$ref":"#/definitions/Products"
+             }
+          }
+        }
+      }
+    },
+    "/products/create": {
       "post": {
         "tags": [
           "Product"
+        ],
+        "parameters": [
+          {
+            "name": "product",
+            "in": "body",
+            "description": "Create Product Detales",
+            "schema": {
+              "type": "object",
+              "required": [
+                "price",
+                "balance",
+                "name",
+                "barcode"
+              ],
+              "properties": {
+                "balance": {
+                  "type": "number"
+                },
+                "price": {
+                  "type": "number"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "barcode": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "description": "products"
+      }
+    },
+    "/products/{id}": {
+      "put": {
+        "tags": [
+          "Product"
+        ],
+        "parameters": [
+          {
+            "name": "product",
+            "in": "body",
+            "description": "Create Product Detales",
+            "schema": {
+              "type": "object",
+              "required": [
+                "_id",
+                "price",
+                "balance",
+                "name",
+                "barcode"
+              ],
+              "properties": {
+                "_id": {
+                  "type": "string"
+                },
+                "balance": {
+                  "type": "number"
+                },
+                "price": {
+                  "type": "number"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "barcode": {
+                  "type": "string"
+                }
+              }
+            }
+          }
         ],
         "description": "products"
       }
@@ -131,6 +217,36 @@
           "user": {
             "$ref": "#/definitions/User"
           }
+        }
+      ]
+    },
+    "Product": {
+      "type": "object",
+      "properties": [
+        {
+          "_id":{
+            "type":"string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "barcode": {
+            "type": "string"
+          },
+          "price":{
+            "type": "number"
+          },
+          "balance":{
+            "type": "number"
+          }
+        }
+      ]
+    },
+    "Products": {
+      "type": "array",
+      "properties": [
+        {
+          "$ref":"#/definitions/Product"
         }
       ]
     }

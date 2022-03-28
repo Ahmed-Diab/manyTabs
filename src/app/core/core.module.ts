@@ -18,19 +18,21 @@ import { AuthService } from './services/auth.service';
 import { EventBusService } from './services/event-bus.service';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+ import { NetworkConnectionService } from './services/network-connection.service';
 
 @NgModule({
   imports: [CommonModule, RouterModule, HttpClientModule, GrowlerModule, ModalModule, OverlayModule, NgbModule,],
-  exports: [GrowlerModule, RouterModule, HttpClientModule, ModalModule, OverlayModule, NavbarComponent,NgbModule],
+  exports: [GrowlerModule, RouterModule, HttpClientModule, ModalModule, OverlayModule, NavbarComponent, NgbModule],
   declarations: [NavbarComponent],
   providers: [SorterService, FilterService, DataService, TrackByService,
-    DialogService, AuthService, EventBusService,
+    DialogService, AuthService, EventBusService, NetworkConnectionService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true,
     },
     { provide: 'Window', useFactory: () => window }
+
   ] // these should be singleton
 })
 export class CoreModule extends EnsureModuleLoadedOnceGuard {    // Ensure that CoreModule is only loaded into AppModule

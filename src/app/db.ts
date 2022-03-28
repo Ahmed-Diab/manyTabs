@@ -1,11 +1,13 @@
 import Dexie, { Table } from 'dexie';
 import { IProduct } from './products/product.interface';
+
 export enum DBRowStateType {
     DELETED = "Deleted",
     UPDATED = "Updated",
     ADDED = "Added",
     ORIGINAL = "Original"
 }
+
 export class AppDB extends Dexie {
     products!: Table<IProduct, number>;
     constructor() {
@@ -14,7 +16,7 @@ export class AppDB extends Dexie {
             products: '++localId, state'
         });
     }
-
+    // Dexie Code To Add New Record TO Local DB 
     async addRecordToLocaleDB(table: string, data: any, state: string = DBRowStateType.ADDED) {
         data.state = state;
         if (data._id == undefined || data._id == "") {
@@ -23,42 +25,39 @@ export class AppDB extends Dexie {
         }
         await db.table(table).add(data);
     }
-
+    // Dexie Code To Update Record At Local DB By Local Id
     async updateRecordFromLocaleDB(table: string, data: any, state: string = DBRowStateType.UPDATED) {
         data.state = state;
         await db.table(table).update(data.localId, data);
     }
-
+    // Dexie Code To Delete Record From Local DB By Local Id
     async deleteRecordFromLocaleDB(table: string, data: any, state: string = DBRowStateType.DELETED) {
         if (state !== DBRowStateType.DELETED) {
             await db.table(table).delete(data.localId);
         } else {
             data.state = DBRowStateType.DELETED;
             await db.table(table).update(data.localId, data);
-
         }
     }
 
-    async deleteBulkFromLocaleDB(table: string, data: any[]) {
-        await db.table(table).bulkDelete(data);
+    // Dexie Code To Delete Bulk Of Record From Local DB By Arry of Local Ids
+    async deleteBulkFromLocaleDB(table: string, ids: any[]) {
+        await db.table(table).bulkDelete(ids);
     }
-
+    // Dexie Code To Add New Bulk Of Record To Local DB;
     async addBulkOfDataToLocaleDB(table: string, data: any[]) {
         await db.table(table).bulkAdd(data);
     }
 
-    async getProductsLocale() {
-        return await db.products.toArray();
-    }
-
+    // Dexie Code To Get All Table Records form Local DB;
     getAllDataFromLocaleDB(table: string): Promise<any[]> {
         return db.table(table).where("state").notEqual(DBRowStateType.DELETED).toArray();
     }
-
-    async getDataByState(table: string, state: string = undefined): Promise<{ data: any[], ids: number[] | null}> {
+    // Dexie Code To Filter Data Table And Get Records By Stata Type like <Added, Updated, Deleted, Original>
+    // And Return Arry Of Data And Array Of ids; 
+    async getDataByState(table: string, state: string = undefined): Promise<{ data: any[], ids: number[] | null }> {
         var data: any[];
         data = await db.table(table).where("state").equals(state).toArray();
-        console.log("🚀 ~ file: db.ts ~ line 61 ~ AppDB ~ getDataByState ~ data", data)
         if (data != null && data.length > 0) {
             let ids: number[] = [];
             data.filter(obj => {
@@ -69,10 +68,9 @@ export class AppDB extends Dexie {
         }
         return null;
     }
-
-    clearTable(table: string) {
-        db.table(table).clear();
-    }
+// Dexie Code To Clear Table
+    clearTable(table: string) { db.table(table).clear(); }
+    
 }
 
 export const db = new AppDB();

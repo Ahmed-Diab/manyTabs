@@ -20,7 +20,6 @@ export class NetworkConnectionService {
   }
 
   private updateNetworkConnectionStatus() {
-    console.log(window.navigator.onLine);
-    this.internetConnctionChanged.next(window.navigator.onLine);
+     this.internetConnctionChanged.next(window.navigator.onLine);
   }
 }

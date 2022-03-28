@@ -53,28 +53,4 @@ export class NavbarComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.sub.unsubscribe();
     }
-
-    // loginOrOut() {
-    //     const isAuthenticated = this.authservice.isAuthenticated;
-    //     if (isAuthenticated) {
-    //         this.authservice.logout()
-    //             .subscribe((status: boolean) => {
-    //                 this.setLoginLogoutText();
-    //                 this.growler.growl('Logged Out', GrowlerMessageType.Info);
-    //                 this.router.navigate(['/customers']);
-    //                 return;
-    //             },
-    //             (err: any) => this.logger.log(err));
-    //     }
-    //     this.redirectToLogin();
-    // }
-
-    // redirectToLogin() {
-    //     this.router.navigate(['/login']);
-    // }
-
-    // setLoginLogoutText() {
-    //     this.loginLogoutText = (this.authservice.isAuthenticated) ? 'Logout' : 'Login';
-    // }
-
 }

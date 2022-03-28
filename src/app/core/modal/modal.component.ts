@@ -27,9 +27,7 @@ export class ModalComponent implements OnInit {
     modalService.hide = this.hide.bind(this);
   }
 
-  ngOnInit() {
-
-  }
+  ngOnInit() { }
 
   show(modalContent: IModalContent) {
     this.modalContent = Object.assign(this.defaultModalContent, modalContent);

@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { CountresComponent } from './countres/countres.component';
 import { CustomersComponent } from './customers/customers.component';
 import { HomeComponent } from './home/home.component';
+import { PreloadModulesStrategy } from './core/strategies/preload-modules.strategy';
+
   const routes: Routes = [
   {
     path:"",
@@ -27,7 +29,8 @@ import { HomeComponent } from './home/home.component';
   },
 ];
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  imports: [RouterModule.forRoot(routes, { preloadingStrategy: PreloadModulesStrategy, relativeLinkResolution: 'legacy' }) ],
+  exports: [RouterModule],
+  providers:[PreloadModulesStrategy]
 })
 export class AppRoutingModule { }
