@@ -1,1 +1,51 @@
-<p>orders works!</p>
+<div class="row align-items-start mt-3">
+    <div class="col">
+        <mt-filter-textbox class="navbar-right" (changed)="filterChanged($event)"></mt-filter-textbox>
+    </div>
+
+    <div class="col text-end">
+        <button type="button" class="btn btn-success" (click)="openOrderForm(content)">Add Order</button>
+    </div>
+</div>
+
+<ng-template #content let-modal>
+
+    <div class="modal-header">
+        <h4 class="modal-title">{{order._id != undefined?"Update Order" :"Add New Order"}}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    
+ <label for="typeahead-template" class="col-xs-3 col-sm-auto col-form-label">Search for a state:</label>
+<div class="col">
+  <input id="typeahead-template" type="text" class="form-control col" [(ngModel)]="model" [ngbTypeahead]="search" [resultTemplate]="rt"
+    [inputFormatter]="formatter" />
+</div>
+</div>
+    <!--   
+    <div class="modal-body">
+      <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input type="text" autocomplete="off" [(ngModel)]="order.name" class="form-control" id="name" placeholder="name">
+      </div>
+      <div class="mb-3">
+        <label for="barcode" autocomplete="off" class="form-label">Email</label>
+        <input type="email" [(ngModel)]="order.email" class="form-control" id="barcode" placeholder="barcode">
+      </div>
+      <div class="mb-3">
+        <label for="barcode" autocomplete="off" class="form-label">Phone Number</label>
+        <input type="email" [(ngModel)]="order.phoneNumber" class="form-control" id="barcode" placeholder="barcode">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button *ngIf="order._id == undefined" type="button" class="btn btn-success"
+        (click)="addNewOrder()">save</button>
+      <button *ngIf="order._id != undefined" type="button" class="btn btn-success" (click)="updateOrder(modal)">save
+        updates</button>
+      <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Cansle</button>
+    </div>
+       -->
+
+</ng-template>
+
+<mt-order-grid [orders]="filteredOrders" [pageId]="pageId" (ChangesOrders)="changeGridData($event)"
+    (UpdateOrder)="getOrderDataFromGrid(content, $event)"></mt-order-grid>

@@ -1,6 +1,7 @@
 import Dexie, { Table } from 'dexie';
 import { IProduct } from './products/product.interface';
 import { ICustomer } from './customers/customer.interface';
+import { IOrder } from './shared/interfaces';
 
 export enum DBRowStateType {
     DELETED = "Deleted",
@@ -12,11 +13,14 @@ export enum DBRowStateType {
 export class AppDB extends Dexie {
     products!: Table<IProduct, number>;
     customers!: Table<ICustomer, number>;
+    orders!: Table<IOrder, number>;
     constructor() {
         super('manyTabs');
         this.version(3).stores({
             products: '++localId, state',
-            customers: '++localId, state'
+            customers: '++localId, state',
+            orders: '++localId, state'
+            
         });
     }
 
@@ -26,7 +30,9 @@ export class AppDB extends Dexie {
                 var db = new Dexie('manyTabs');
                 db.version(3).stores({
                     products: '++localId, state',
-                    customers: '++localId, state'
+                    customers: '++localId, state',
+                    orders: '++localId, state'
+
                 });
                 db.open();
             }

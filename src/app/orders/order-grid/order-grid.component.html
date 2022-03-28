@@ -1,0 +1,26 @@
+<table class="table table-striped table-responsive-md">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Seeting</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let order of orders; index as i">
+            <th scope="row" [ngClass]="order.state == 'Original' ? 'b-safed': 'b-not-safed'">{{ i+1 }}</th>
+            <td>
+                {{ order?.createdAt | date:'dd/MM/yyyy'}}
+            </td>
+            <td>{{ order?.total }}</td>
+            <td>{{ order?.customer?.name }}</td>
+            <td>
+                <button type="button" class="btn btn-danger ms-3 me-3"
+                    (click)="deleteOrder(order)">Delete</button>
+                <button type="button" class="btn btn-primary" (click)="updateOrder(order)">Update</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
