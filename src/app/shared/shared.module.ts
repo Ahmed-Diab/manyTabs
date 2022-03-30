@@ -8,10 +8,12 @@ import { PaginationModule } from './pagination/pagination.module';
 import { CapitalizePipe } from './pipes/capitalize.pipe';
 import { TrimPipe } from './pipes/trim.pipe';
 import { SortByDirective } from './directives/sortby.directive';
+import { FilterSelectComponent } from './filter-select/filter-select.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
-  imports: [CommonModule, FilterTextboxModule, PaginationModule ],
-  exports: [ CommonModule, FormsModule, CapitalizePipe, TrimPipe, SortByDirective, FilterTextboxModule, PaginationModule ],
-  declarations: [ CapitalizePipe, TrimPipe, SortByDirective ]
+  imports: [CommonModule, FilterTextboxModule, PaginationModule, NgbModule,FormsModule ],
+  exports: [ CommonModule, FormsModule, CapitalizePipe, TrimPipe, SortByDirective, FilterSelectComponent,FilterTextboxModule, PaginationModule ],
+  declarations: [ CapitalizePipe, TrimPipe, SortByDirective, FilterSelectComponent ]
 })
 export class SharedModule { }

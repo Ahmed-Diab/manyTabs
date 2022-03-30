@@ -4,7 +4,11 @@ import { debounceTime, distinctUntilChanged, filter, map, merge, Observable, Ope
 import { GrowlerMessageType, GrowlerService } from '../core/growler/growler.service';
 import { FilterService } from '../core/services/filter.service';
 import { NetworkConnectionService } from '../core/services/network-connection.service';
+import { ICustomer } from '../customers/customer.interface';
+import { CustomerService } from '../customers/customer.service';
 import { db, DBRowStateType } from '../db';
+import { IProduct } from '../products/product.interface';
+import { ProductService } from '../products/product.service';
 import { IOrder } from './order.interface';
 import { OrderService } from './order.service';
 
@@ -27,32 +31,46 @@ export class OrdersComponent implements OnInit, OnDestroy {
   filteredOrders: IOrder[] = [];
   subscriptions: Subscription = new Subscription();
   order: IOrder = { _id: undefined, total: 0, createdAt: new Date().toString(), orderLines: [], customer: { email: "", name: "", phoneNumber: "" } }
-  search: OperatorFunction<string, readonly {name, flag}[]> = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(200),
-      map(term => term === '' ? []
-        : statesWithFlags.filter(v => v.name.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
-    )
-
-  formatter = (x: {name: string}) => x.name;
+  customersList: ICustomer[] = [];
+  productList: IProduct[] = [];
+  formatter = (x: { name: string }) => x.name;
   constructor(
     private orderService: OrderService,
     private filterService: FilterService,
     private modalService: NgbModal,
     private growlService: GrowlerService,
-    private conctionService: NetworkConnectionService
+    private conctionService: NetworkConnectionService,
+    private customerService: CustomerService,
+    private productService: ProductService
+
   ) {
     this.listenToConctionEvent(this.conctionService)
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.getOrders();
+    this.subscriptions.add(this.productService.getAllProducts().subscribe((res) => {
+      if (res.success) {
+        this.productList = res.products;
+      }
+    }))
+    this.subscriptions.add(this.customerService.getAllCustomers().subscribe((res) => {
+      if (res.success) {
+        this.customersList = res.customers;
+      }
+    }))
   }
+
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
 
-
+  deleteProduct(product: IProduct) {
+    this.order.orderLines =  this.order.orderLines.filter(o => o.product.barcode !== product.barcode);
+  }
+  selectProduct(data: any) {
+    this.order.orderLines.push({ product: data, quntity: 1, price: data.price, total: data.price })
+  }
   changeGridData(orders: IOrder[]) {
     this.filteredOrders = orders;
     this.ordersData = orders;

@@ -11,9 +11,9 @@ export class TabService {
   private tabChanged = new Subject<any>();
   tabChanged$ = this.tabChanged.asObservable();
   tabOptions: ITab[] = [
-    { id: 1, name: 'Customers', url: '/customers', data: [], isActive: false },
-    { id: 3, name: 'Products', url: '/products', data: [], isActive: false },
-    { id: 2, name: 'Orders', url: '/orders', data: [], isActive: false },
+    { id: 1, name: 'Products', url: '/products', data: [], isActive: false },
+    { id: 2, name: 'Customers', url: '/customers', data: [], isActive: false },
+    { id: 3, name: 'Orders', url: '/orders', data: [], isActive: false },
 
   ];
 

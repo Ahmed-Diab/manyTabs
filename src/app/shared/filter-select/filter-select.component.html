@@ -1,0 +1,5 @@
+<label class="form-label">{{lable}}</label>
+<div class="col">
+    <input type="text" class="form-control"  [(ngModel)]="model" [ngbTypeahead]="search" [inputFormatter]="formatter"
+        [resultFormatter]="formatter" [editable]='false' (selectItem)="selectedItem($event)" />
+</div>

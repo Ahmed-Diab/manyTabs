@@ -14,7 +14,7 @@ import { NetworkConnectionService } from '../core/services/network-connection.se
   styleUrls: ['./customers.component.scss']
 })
 export class CustomersComponent implements OnInit, OnDestroy {
-  pageId: number = 3;
+  pageId: number = 2;
   customersData: ICustomer[] = [];
   filteredCustomers: ICustomer[] = [];
   subscriptions: Subscription = new Subscription();
