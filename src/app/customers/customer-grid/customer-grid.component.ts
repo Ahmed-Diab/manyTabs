@@ -4,8 +4,8 @@ import { ICustomer } from '../customer.interface';
 import { CustomerService } from '../customer.service';
 import { ModalService } from 'src/app/core/modal/modal.service';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { NetworkConnectionService } from 'src/app/core/services/network-connection.service';
 import { GrowlerMessageType, GrowlerService } from 'src/app/core/growler/growler.service';
+import { NetworkConnectionService } from 'src/app/core/services/network-connection.service';
 
 @Component({
   selector: 'mt-customer-grid',
@@ -13,11 +13,11 @@ import { GrowlerMessageType, GrowlerService } from 'src/app/core/growler/growler
   styleUrls: ['./customer-grid.component.scss']
 })
 export class CustomerGridComponent  implements OnInit, OnDestroy {
-  @Input() customers: ICustomer[];
   @Input() pageId: number;
+  @Input() customers: ICustomer[];
+  subscriptions: Subscription = new Subscription();
   @Output() UpdateCustomer: EventEmitter<ICustomer> = new EventEmitter<ICustomer>();
   @Output() ChangesCustomers: EventEmitter<ICustomer[]> = new EventEmitter<ICustomer[]>();
-  subscriptions: Subscription = new Subscription();
 
   constructor(
     private moduleService: ModalService,

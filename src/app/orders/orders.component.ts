@@ -1,25 +1,18 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { NgbModal, NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
-import { debounceTime, distinctUntilChanged, filter, map, merge, Observable, OperatorFunction, Subject, Subscription } from 'rxjs';
-import { GrowlerMessageType, GrowlerService } from '../core/growler/growler.service';
-import { FilterService } from '../core/services/filter.service';
-import { NetworkConnectionService } from '../core/services/network-connection.service';
-import { ICustomer } from '../customers/customer.interface';
-import { CustomerService } from '../customers/customer.service';
+import {  Subscription } from 'rxjs';
 import { db, DBRowStateType } from '../db';
-import { IProduct } from '../products/product.interface';
-import { ProductService } from '../products/product.service';
-import { IOrder } from './order.interface';
 import { OrderService } from './order.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { IOrder, IOrderLine } from './order.interface';
+import { IProduct } from '../products/product.interface';
+import { ICustomer } from '../customers/customer.interface';
+import { ProductService } from '../products/product.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { CustomerService } from '../customers/customer.service';
+import { FilterService } from '../core/services/filter.service';
+import { LoggerService } from '../core/services/logger.service';
+import { GrowlerMessageType, GrowlerService } from '../core/growler/growler.service';
+import { NetworkConnectionService } from '../core/services/network-connection.service';
 
-const states = ['Alabama', 'Alaska', 'American Samoa', 'Arizona', 'Arkansas', 'California', 'Colorado',
-  'Connecticut', 'Delaware', 'District Of Columbia', 'Federated States Of Micronesia', 'Florida', 'Georgia',
-  'Guam', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine',
-  'Marshall Islands', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana',
-  'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
-  'Northern Mariana Islands', 'Ohio', 'Oklahoma', 'Oregon', 'Palau', 'Pennsylvania', 'Puerto Rico', 'Rhode Island',
-  'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virgin Islands', 'Virginia',
-  'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'];
 @Component({
   selector: 'app-orders',
   templateUrl: './orders.component.html',
@@ -28,12 +21,15 @@ const states = ['Alabama', 'Alaska', 'American Samoa', 'Arizona', 'Arkansas', 'C
 export class OrdersComponent implements OnInit, OnDestroy {
   pageId: number = 3;
   ordersData: IOrder[] = [];
-  filteredOrders: IOrder[] = [];
-  subscriptions: Subscription = new Subscription();
-  order: IOrder = { _id: undefined, total: 0, createdAt: new Date().toString(), orderLines: [], customer: { email: "", name: "", phoneNumber: "" } }
-  customersList: ICustomer[] = [];
   productList: IProduct[] = [];
+  filteredOrders: IOrder[] = [];
+  customersList: ICustomer[] = [];
   formatter = (x: { name: string }) => x.name;
+  filterProductModel: any = { name: "", _id: "" };
+  subscriptions: Subscription = new Subscription();
+  filterCustomerModel: any = { name: "", _id: "" };
+  order: IOrder = { _id: undefined, total: 0, createdAt: new Date().toString(), orderLines: [], customer: { email: "", name: "", phoneNumber: "" } }
+
   constructor(
     private orderService: OrderService,
     private filterService: FilterService,
@@ -41,7 +37,8 @@ export class OrdersComponent implements OnInit, OnDestroy {
     private growlService: GrowlerService,
     private conctionService: NetworkConnectionService,
     private customerService: CustomerService,
-    private productService: ProductService
+    private productService: ProductService,
+    private logger:LoggerService
 
   ) {
     this.listenToConctionEvent(this.conctionService)
@@ -66,10 +63,14 @@ export class OrdersComponent implements OnInit, OnDestroy {
   }
 
   deleteProduct(product: IProduct) {
-    this.order.orderLines =  this.order.orderLines.filter(o => o.product.barcode !== product.barcode);
+    this.order.orderLines = this.order.orderLines.filter(o => o.product.barcode !== product.barcode);
   }
   selectProduct(data: any) {
-    this.order.orderLines.push({ product: data, quntity: 1, price: data.price, total: data.price })
+    if (data.barcode) {
+      this.order.orderLines.push({ product: data, quntity: 1, price: data.price, total: data.price });
+    }
+    this.filterProductModel = { name: "", _id: "" };
+    this.getOrderTotal(this.order.orderLines);
   }
   changeGridData(orders: IOrder[]) {
     this.filteredOrders = orders;
@@ -81,7 +82,13 @@ export class OrdersComponent implements OnInit, OnDestroy {
     this.order = data;
     this.modalService.open(content, { centered: true });
   }
-
+  getOrderTotal(orderLines: IOrderLine[] = []) {
+    setTimeout(() => {
+      this.order.total = orderLines?.reduce((a, b) => {
+        b.total = b.quntity * b.price;
+        return a + b.total; }, 0);
+     }, 100);
+  }
   async getOrders() {
     // get data from local DB
     let data = await db.getAllDataFromLocaleDB("orders");
@@ -108,54 +115,40 @@ export class OrdersComponent implements OnInit, OnDestroy {
   }
   // Add New Order
   async addNewOrder() {
+    let order = this.ordersData.find(obj => obj.total <= 0 || obj.customer._id == undefined || obj.customer._id == "");
+    if (order) {
+      return this.growlService.growl("order name, email and phone number must be uniqe and atlest one of this is alredy exist in our data base", GrowlerMessageType.Danger)
+    }
     // add data to Local DB if Offline
     if (!this.conctionService.isOnline) {
-      let order = this.ordersData.find(x => x.total <= 0 || x.customer._id == undefined || x.customer._id == "");
-      if (order) {
-        this.growlService.growl("order name, email and phone number must be uniqe and atlest one of this is alredy exist in our data base", GrowlerMessageType.Danger)
-      } else {
-        await db.addRecordToLocaleDB('orders', this.order);
-        this.ordersData = await db.getAllDataFromLocaleDB("orders");
-        this.filteredOrders = await db.getAllDataFromLocaleDB("orders");
-        this.order = this.ordersData.find(x => x.total <= 0 || x.customer._id == undefined || x.customer._id == "");
-      }
+      await db.addRecordToLocaleDB('orders', this.order);
+      this.ordersData = await db.getAllDataFromLocaleDB("orders");
+      this.filteredOrders = await db.getAllDataFromLocaleDB("orders");
+      this.clearOrderData();
       // add data to Server if is Online
     } else {
-      this.subscriptions.add(this.orderService.addNewOrder(this.order).subscribe(async data => {
-        if (data.success) {
-          this.order = { _id: undefined, total: 0, createdAt: new Date().toString(), orderLines: [], customer: { email: "", name: "", phoneNumber: "" } };
-          await db.addRecordToLocaleDB('orders', data.order, DBRowStateType.ORIGINAL);
+      this.subscriptions.add(this.orderService.addNewOrder(this.order).subscribe(async (res) => {
+        if (res.success) {
+          await db.addRecordToLocaleDB('orders', res.order, DBRowStateType.ORIGINAL);
           this.ordersData = await db.getAllDataFromLocaleDB("orders");
           this.filteredOrders = this.ordersData;
-          this.growlService.growl(data.message, GrowlerMessageType.Success);
+          this.growlService.growl(res.message, GrowlerMessageType.Success);
+          this.clearOrderData();
         } else {
-          this.growlService.growl(data.message, GrowlerMessageType.Danger);
+          this.growlService.growl(res.message, GrowlerMessageType.Danger);
+          this.logger.logError(res.message)
         }
       }));
     }
+    return null;
   }
 
-  // Update Order
-  updateOrder(modal: any) {
-    // Update data to Local DB if Offline
-    if (!this.conctionService.isOnline) {
-      db.updateRecordFromLocaleDB('orders', this.order);
-      this.growlService.growl("Sussess update", GrowlerMessageType.Success);
-      modal.dismiss()
-    } else {
-      // Update data to Server if is Online
-      this.subscriptions.add(this.orderService.updateOrder(this.order).subscribe(async data => {
-        if (data.success) {
-          data.order.localId = this.order.localId;
-          await db.updateRecordFromLocaleDB('orders', data.order, DBRowStateType.ORIGINAL);
-          this.growlService.growl(data.message, GrowlerMessageType.Success);
-          modal.dismiss();
-        } else {
-          this.growlService.growl(data.message, GrowlerMessageType.Danger);
-        }
-      }));
-    }
+  clearOrderData() {
+    this.order = { _id: undefined, total: 0, createdAt: new Date().toString(), orderLines: [], customer: { email: "", name: "", phoneNumber: "" } }
+    this.filterCustomerModel = { name: "", _id: "" };
+    this.filterProductModel = { name: "", _id: "" };
   }
+ 
   // filtring orders data by name or barcode
   filterChanged(data: any) {
     if (data && this.ordersData) {
@@ -176,34 +169,18 @@ export class OrdersComponent implements OnInit, OnDestroy {
     conction.connctionChanged.subscribe(async (online) => {
       if (online) {
         let addedData = await db.getDataByState("orders", DBRowStateType.ADDED);
-        let updatedData = await db.getDataByState("orders", DBRowStateType.UPDATED);
+         //let updatedData = await db.getDataByState("orders", DBRowStateType.UPDATED);
         let deletedData = await db.getDataByState("orders", DBRowStateType.DELETED);
         if (addedData != null) await this.addNewBulkOfOrdersFromLocalDB(addedData);
-        if (updatedData != null) await this.updateBulkOfOrdersFromLocalDB(updatedData);
+        //if (updatedData != null) await this.updateBulkOfOrdersFromLocalDB(updatedData);
         if (deletedData != null) await this.deleteBulkOfOrdersFromLocalDB(deletedData);
-        console.log("went online");
+        this.logger.log('went offline');
       } else {
-        console.log('went offline');
+        this.logger.log('went offline');
       }
     });
   }
-
-  //////////////////  Update  Bulk Of Orders  >>> PWA <<< ///////////////
-  async updateBulkOfOrdersFromLocalDB(updatedData: any) {
-    let localIds: number[] = [];
-    updatedData?.data?.forEach((obj: any) => {
-      localIds.push(obj.localId);
-    });
-    await this.orderService.updateBulkOrder(updatedData.data).subscribe(async (res) => {
-      if (res.success) {
-        await db.deleteBulkFromLocaleDB("orders", localIds);
-        let data: IOrder[] = res.orders?.filter((p: IOrder, index: number) => res.orders[index].state = "Original")
-        await db.addBulkOfDataToLocaleDB("orders", data);
-        this.ordersData = await db.getAllDataFromLocaleDB("orders");
-        this.filteredOrders = await db.getAllDataFromLocaleDB("orders");
-      }
-    });
-  }
+ 
   //////////////////  Delete  Bulk Of Orders  >>> PWA <<< ///////////////
   async deleteBulkOfOrdersFromLocalDB(deletedData: any) {
     let ids: string[] = [];
@@ -217,18 +194,24 @@ export class OrdersComponent implements OnInit, OnDestroy {
         await db.deleteBulkFromLocaleDB("orders", localIds);
         this.ordersData = await db.getAllDataFromLocaleDB("orders");
         this.filteredOrders = await db.getAllDataFromLocaleDB("orders");
+      }else{
+        this.growlService.growl(res.message, GrowlerMessageType.Danger);
+        this.logger.log(res.message)
       }
     });
   }
   //////////////////  Add  Bulk Of Orders  >>> PWA <<< ///////////////
   async addNewBulkOfOrdersFromLocalDB(addedData: any) {
     await this.orderService.addBulkOrder(addedData.data).subscribe(async (res) => {
-      if (res.success) {
+      if (res.success && res.orders.length > 0) {
         await db.deleteBulkFromLocaleDB("orders", addedData.ids);
         let data: IOrder[] = res.orders?.filter((p: IOrder, index: number) => res.orders[index].state = "Original")
         await db.addBulkOfDataToLocaleDB("orders", data);
         this.ordersData = await db.getAllDataFromLocaleDB("orders");
         this.filteredOrders = await db.getAllDataFromLocaleDB("orders");
+      }else{
+        this.growlService.growl(res.message, GrowlerMessageType.Danger);
+        this.logger.logError(res.message)
       }
     });
   }

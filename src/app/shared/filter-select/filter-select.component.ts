@@ -10,7 +10,7 @@ export class FilterSelectComponent implements OnInit {
   @Input() lable: string = "";
   @Input() data: any[];
   @Output() SelectedItem: EventEmitter<any> = new EventEmitter<any>();
-  model: any;
+  @Input() model: any;
   formatter = (state: any) => state.name;
   constructor() { }
 

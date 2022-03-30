@@ -13,11 +13,11 @@ import { NetworkConnectionService } from 'src/app/core/services/network-connecti
   styleUrls: ['./products-grid.component.scss']
 })
 export class ProductsGridComponent implements OnInit, OnDestroy {
-  @Input() produacts: IProduct[];
   @Input() pageId: number;
+  @Input() produacts: IProduct[];
+  subscriptions: Subscription = new Subscription();
   @Output() UpdateProduct: EventEmitter<IProduct> = new EventEmitter<IProduct>();
   @Output() ChangesProducts: EventEmitter<IProduct[]> = new EventEmitter<IProduct[]>();
-  subscriptions: Subscription = new Subscription();
 
   constructor(
     private moduleService: ModalService,

@@ -5,13 +5,31 @@ module.exports = {
   insertMany,
   deleteProduct,
   updateProduct,
-  deleteMany
+  deleteMany,
+  addToProductsBalance,
+  reduceProductsBalance
 };
 
 /// get All Products
 async function allProducts() {
   var products = await Product.find({});
   return await products;
+}
+// update product quntity 
+async function addToProductsBalance(orderLines) {
+  await orderLines.forEach(async  orderLine => {
+    await Product.findByIdAndUpdate(
+      { _id: orderLine.product._id },
+      { $inc: { balance: orderLine.quntity } }).then(data => data).catch(error => error);
+  });
+}
+
+async function reduceProductsBalance(orderLines) {
+  await orderLines.forEach(async  orderLine => {
+    await Product.findByIdAndUpdate(
+      { _id: orderLine.product._id },
+      { $inc: { balance: -orderLine.quntity } }).then(data => data).catch(error => error);
+  });
 }
 
 // add new Product
@@ -28,7 +46,7 @@ async function updateProduct(product) {
       barcode: product.barcode,
       price: product.price,
       balance: product.balance
-    }, { returnDocument:"after" }).then(data=>data).catch(error=>error);
+    }, { returnDocument: "after" }).then(data => data).catch(error => error);
 }
 // Delete Product By Id
 async function deleteProduct(id) {
@@ -42,7 +60,7 @@ async function insertMany(products) {
 }
 
 // delete Many Products >>>For PWA <<<
-async function deleteMany(ids){
-  return await Product.deleteMany({_id:{$in:ids}}).then(data => data).catch(err => console.log(err.writeErrors));
+async function deleteMany(ids) {
+  return await Product.deleteMany({ _id: { $in: ids } }).then(data => data).catch(err => console.log(err.writeErrors));
 }
 

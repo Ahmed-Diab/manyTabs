@@ -40,6 +40,7 @@ export class AppDB extends Dexie {
     }
     // Dexie Code To Add New Record TO Local DB 
     async addRecordToLocaleDB(table: string, data: any, state: string = DBRowStateType.ADDED) {
+        debugger
         data.state = state;
         if (data._id == undefined || data._id == "") {
             let newId = (await db.table(table).toArray()).length + 1

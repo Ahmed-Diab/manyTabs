@@ -16,6 +16,7 @@ export class MenuComponent implements OnInit {
   ngOnInit() {
     this.menuOptions = this.tabService.tabOptions;
   }
+  
   openTab(option: any) {
     this.tabService.addTab(option.url);
     this.router.navigateByUrl(option.url);

@@ -16,11 +16,10 @@ import { NetworkConnectionService } from '../core/services/network-connection.se
 })
 export class ProductsComponent implements OnInit, OnDestroy {
   pageId: number = 3;
-  product: IProduct = { _id: undefined, name: '', barcode: '', price: 0, balance: 0 }
   productsData: IProduct[] = [];
   filteredProducts: IProduct[] = [];
   subscriptions: Subscription = new Subscription();
-
+  product: IProduct = { _id: undefined, name: '', barcode: '', price: 0, balance: 0 }
   constructor(
     private productService: ProductService,
     private filterService: FilterService,

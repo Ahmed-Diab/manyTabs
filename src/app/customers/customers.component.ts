@@ -1,5 +1,5 @@
-import { db, DBRowStateType } from '../db';
 import { Subscription } from 'rxjs';
+import { db, DBRowStateType } from '../db';
 import { ICustomer } from './customer.interface';
 import { CustomerService } from './customer.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';

@@ -12,6 +12,5 @@ export class AppComponent implements OnInit {
     localStorage.setItem("openedTabs", "[]");
     db.initLocalDB();
   }
-  title = 'tapsApp';
-
+ 
 }

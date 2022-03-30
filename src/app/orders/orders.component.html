@@ -16,12 +16,14 @@
 
   <div class="modal-body">
     <div class="mb-3">
-      <mt-filter-select [lable]="'Customer Name'" [data]="customersList" (SelectedItem)="order.customer = $event">
+      <mt-filter-select [lable]="'Customer Name'" [data]="customersList" (SelectedItem)="order.customer = $event"
+        [model]="filterCustomerModel">
       </mt-filter-select>
     </div>
 
     <div class="mb-3">
-      <mt-filter-select [lable]="'Selected Item'" [data]="productList" (SelectedItem)="selectProduct($event)">
+      <mt-filter-select [lable]="'Selected Item'" [data]="productList" (SelectedItem)="selectProduct($event)"
+        [model]="filterProductModel">
       </mt-filter-select>
     </div>
     <div class="mb-3">
@@ -46,11 +48,12 @@
               {{ o?.product.barcode }}
             </td>
             <td>
-              <input type="number" [name]="'pQuntity'+i" [(ngModel)]="o.quntity" class="form-control" >
-
-             </td>
+              <input type="number" (ngModelChange)="getOrderTotal(order.orderLines)" [name]="'pQuntity'+i"
+                [(ngModel)]="o.quntity" class="form-control">
+            </td>
             <td>
-              <input type="number" [name]="'pPrice'+i" [(ngModel)]="o.price" class="form-control">
+              <input type="number" (ngModelChange)="getOrderTotal(order.orderLines)" [name]="'pPrice'+i"
+                [(ngModel)]="o.price" class="form-control">
             </td>
             <td>{{ o?.price * o.quntity}}</td>
             <td>
@@ -58,6 +61,15 @@
             </td>
           </tr>
         </tbody>
+        <tfoot>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>Total : </td>
+          <td> {{ order.total }}</td>
+
+        </tfoot>
       </table>
     </div>
   </div>
@@ -65,30 +77,6 @@
     <button *ngIf="order._id == undefined" type="button" class="btn btn-success" (click)="addNewOrder()">save</button>
     <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Cansle</button>
   </div>
-  <!--   
-    <div class="modal-body">
-      <div class="mb-3">
-        <label for="name" class="form-label">Name</label>
-        <input type="text" autocomplete="off" [(ngModel)]="order.name" class="form-control" id="name" placeholder="name">
-      </div>
-      <div class="mb-3">
-        <label for="barcode" autocomplete="off" class="form-label">Email</label>
-        <input type="email" [(ngModel)]="order.email" class="form-control" id="barcode" placeholder="barcode">
-      </div>
-      <div class="mb-3">
-        <label for="barcode" autocomplete="off" class="form-label">Phone Number</label>
-        <input type="email" [(ngModel)]="order.phoneNumber" class="form-control" id="barcode" placeholder="barcode">
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button *ngIf="order._id == undefined" type="button" class="btn btn-success"
-        (click)="addNewOrder()">save</button>
-      <button *ngIf="order._id != undefined" type="button" class="btn btn-success" (click)="updateOrder(modal)">save
-        updates</button>
-      <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Cansle</button>
-    </div>
-       -->
-
 </ng-template>
 
 <mt-order-grid [orders]="filteredOrders" [pageId]="pageId" (ChangesOrders)="changeGridData($event)"

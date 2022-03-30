@@ -1,11 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { GrowlerMessageType, GrowlerService } from 'src/app/core/growler/growler.service';
-import { ModalService } from 'src/app/core/modal/modal.service';
-import { NetworkConnectionService } from 'src/app/core/services/network-connection.service';
-import { db, DBRowStateType } from 'src/app/db';
 import { IOrder } from '../order.interface';
+import { db, DBRowStateType } from 'src/app/db';
 import { OrderService } from '../order.service';
+import { ModalService } from 'src/app/core/modal/modal.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { GrowlerMessageType, GrowlerService } from 'src/app/core/growler/growler.service';
+import { NetworkConnectionService } from 'src/app/core/services/network-connection.service';
 
 @Component({
   selector: 'mt-order-grid',
@@ -13,11 +13,11 @@ import { OrderService } from '../order.service';
   styleUrls: ['./order-grid.component.scss']
 })
 export class OrderGridComponent implements OnInit {
-  @Input() orders: IOrder[];
   @Input() pageId: number;
+  @Input() orders: IOrder[];
+  subscriptions: Subscription = new Subscription();
   @Output() UpdateOrder: EventEmitter<IOrder> = new EventEmitter<IOrder>();
   @Output() ChangesOrders: EventEmitter<IOrder[]> = new EventEmitter<IOrder[]>();
-  subscriptions: Subscription = new Subscription();
 
   constructor(
     private moduleService: ModalService,
@@ -29,9 +29,7 @@ export class OrderGridComponent implements OnInit {
     this.subscriptions.unsubscribe();
   }
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void { }
 
   updateOrder(order: IOrder) {
     this.UpdateOrder.emit(order)

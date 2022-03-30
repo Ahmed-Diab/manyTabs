@@ -1,15 +1,12 @@
 import { Injectable } from '@angular/core';
-
 import { PropertyResolver } from './property-resolver';
-
 @Injectable({
     providedIn: 'root',
 })
 export class SorterService {
-
     property: string;
     direction = 1;
-
+    
     sort(collection: any[], prop: any, reverseSort = true) {
         this.property = prop;
         if (reverseSort) {
