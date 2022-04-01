@@ -18,9 +18,6 @@ const CustomerSchema = new mongoose.Schema(
             maxlength:[11, "phone number max length 11"],
             unique:[true, 'this phone number is is exest']
         }
-    },
-    {
-        versionKey: false,
     }
 );
 

@@ -17,7 +17,7 @@ async function allProducts() {
 }
 // update product quntity 
 async function addToProductsBalance(orderLines) {
-  await orderLines.forEach(async  orderLine => {
+  await orderLines.forEach(async orderLine => {
     await Product.findByIdAndUpdate(
       { _id: orderLine.product._id },
       { $inc: { balance: orderLine.quntity } }).then(data => data).catch(error => error);
@@ -25,7 +25,7 @@ async function addToProductsBalance(orderLines) {
 }
 
 async function reduceProductsBalance(orderLines) {
-  await orderLines.forEach(async  orderLine => {
+  await orderLines.forEach(async orderLine => {
     await Product.findByIdAndUpdate(
       { _id: orderLine.product._id },
       { $inc: { balance: -orderLine.quntity } }).then(data => data).catch(error => error);

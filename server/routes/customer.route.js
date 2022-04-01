@@ -1,8 +1,7 @@
 const express = require('express');
 const asyncHandler = require('express-async-handler');
 const customerCtrl = require('../controllers/customer.controller');
-const Customer = require('../models/customer.model');
-
+ 
 const router = express.Router();
 module.exports = router;
 router.get('/', asyncHandler(getAllCustomers));
@@ -13,6 +12,8 @@ router.post('/createMany', asyncHandler(insertMany));
 router.post('/deleteMany', asyncHandler(deleteMany));
 router.post('/updateMany', asyncHandler(updateMany));
 
+
+//////// >> Get all Customers <<<<<<<\\\\\\\\\\
 async function getAllCustomers(req, res) {
   await customerCtrl.allCustomers().then(customers => {
     return res.json({ success: true, customers: customers });
@@ -20,7 +21,7 @@ async function getAllCustomers(req, res) {
     return res.json({ success: false, message: error.message });
   })
 }
-
+//////// >> Create New Customers <<<<<<<\\\\\\\\\\
 async function insert(req, res, next) {
   await customerCtrl.insert(req.body).then((customer) => {
     return res.json({ success: true, customer: customer, message: "Success Add" });
@@ -32,7 +33,7 @@ async function insert(req, res, next) {
     return res.json({ success: false, message: error.message });
   });
 }
-
+//////// >> Update  Customer <<<<<<<\\\\\\\\\\
 async function updateCustomer(req, res, next) {
   await customerCtrl.updateCustomer(req.body).then((customer) => {
     return res.json({ success: true, customer: customer, message: "Success Update" });
@@ -45,6 +46,7 @@ async function updateCustomer(req, res, next) {
   });
 }
 
+//////// >>  Delete Customers <<<<<<<\\\\\\\\\\
 async function deleteCustomer(req, res, next) {
   await customerCtrl.deleteCustomer(req.params.id).then((customer) => {
     return res.json({ success: true, message: "Success Delete" });
@@ -52,7 +54,7 @@ async function deleteCustomer(req, res, next) {
     return res.json({ success: false, message: error.message });
   });
 }
-
+/// >>>>>> Update Many Custmoer >>>>>>> PWA <<<<<<<<
 async function updateMany(req, res, next) {
   var updatedCustomers = [];
   await Promise.all(
@@ -67,6 +69,7 @@ async function updateMany(req, res, next) {
   return res.json({ success: true, customers: await updatedCustomers });
 }
 
+/// >>>>>> Insert Many Custmoer >>>>> PWA <<<<<<< 
 async function insertMany(req, res, next) {
   await customerCtrl.insertMany(req.body).then((data) => {
     return res.json({ success: true, customers: data });
@@ -78,7 +81,7 @@ async function insertMany(req, res, next) {
     return res.json({ success: false, message: error.message });
   });
 }
-
+/// >>>>>>  Delete Many Custmoer >>> PWA <<<<<<< 
 async function deleteMany(req, res, next) {
   await customerCtrl.deleteMany(req.body).then((data) => {
     return res.json({ success: true, data: data, message: "Success Deleted" });

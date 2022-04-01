@@ -1,5 +1,6 @@
 const Order = require('../models/order.model');
 const productCtrl = require('../controllers/product.controller');
+
 module.exports = {
   allOrders,
   insert,
@@ -15,7 +16,7 @@ async function allOrders() {
   return await orders;
 }
 
-// add new Customer
+// create order
 async function insert(order) {
   await order.orderLines.forEach((line, index) => {
     order.orderLines[index].product = line.product._id;

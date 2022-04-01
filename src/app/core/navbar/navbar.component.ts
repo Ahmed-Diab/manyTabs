@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { GrowlerService, GrowlerMessageType } from '../growler/growler.service';
 import { LoggerService } from '../services/logger.service';
-import { ITab, TabService } from 'src/app/tab.service';
+import { ITab, TabService } from 'src/app/main-content/tab.service';
 
 @Component({
     selector: 'mt-navbar',

@@ -1,7 +1,7 @@
 import { Subscription } from 'rxjs';
 import { db, DBRowStateType } from '../../db';
 import { IProduct } from '../product.interface';
-import { TabService } from 'src/app/tab.service';
+import { TabService } from 'src/app/main-content/tab.service';
 import { ProductService } from '../product.service';
 import { ModalService } from 'src/app/core/modal/modal.service';
 import { GrowlerMessageType, GrowlerService } from 'src/app/core/growler/growler.service';

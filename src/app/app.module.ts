@@ -1,8 +1,7 @@
 
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
-import { MenuComponent } from './menu/menu.component';
-import { SharedModule } from './shared/shared.module';
+ import { SharedModule } from './shared/shared.module';
 import { HomeComponent } from './home/home.component';
 import { AppRoutingModule } from './app-routing.module';
 import { BrowserModule } from '@angular/platform-browser';
@@ -15,8 +14,7 @@ import { MainContentComponent } from './main-content/main-content.component';
   declarations: [
     AppComponent,
     HomeComponent,
-    MenuComponent,
-    MainContentComponent,
+     MainContentComponent,
  
 
   ],

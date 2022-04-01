@@ -1,6 +1,6 @@
-import { ITab } from './../tab.service';
+import { ITab } from './tab.service';
 import { Component, OnInit } from '@angular/core';
-import { TabService } from '../tab.service';
+import { TabService } from './tab.service';
 import { Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
 

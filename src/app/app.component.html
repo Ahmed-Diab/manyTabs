@@ -1,13 +1,28 @@
-<mt-navbar></mt-navbar>
+<div class="wrapper">
+  <nav id="sidebar" [ngClass]="{ 'active': navbarOpen }">
+    <div class="sidebar-header">
+      <h3>Multy Tabs</h3>
+    </div>
+    <ul>
+      <li *ngFor="let option of menuOptions" (click)="openTab(option)">
+        <a>{{option.name}}</a>
+      </li>
+    </ul>
+  </nav>
+  <div class="container">
+    <button type="button" id="sidebarCollapse" (click)="toggleNavbar()" class="navbar-btn">
+      <span></span>
+      <span></span>
+      <span></span></button>
+    <app-main-content class="main-content-container"></app-main-content>
 
-<div class="container">
-  <app-main-content class="main-content-container"></app-main-content>
+    <router-outlet></router-outlet>
+    <mt-growler position="top-right" [timeout]="2000"></mt-growler>
+    <mt-modal></mt-modal>
 
-  <router-outlet></router-outlet>
-  <mt-growler position="top-right" [timeout]="2000"></mt-growler>
-  <mt-modal></mt-modal>
+    <mt-overlay [delay]="3000">
+      <span class="spinner"></span>&nbsp;&nbsp;&nbsp; Loading
+    </mt-overlay>
+  </div>
 
-  <mt-overlay [delay]="3000">
-    <span class="spinner"></span>&nbsp;&nbsp;&nbsp; Loading
-  </mt-overlay>
 </div>
